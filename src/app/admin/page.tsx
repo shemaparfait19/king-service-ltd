@@ -1,5 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Newspaper, Wrench, Languages, ImageIcon, CalendarCheck } from 'lucide-react';
+import { Newspaper, Wrench, Languages, ImageIcon, CalendarCheck, FolderKanban } from 'lucide-react';
 import Link from 'next/link';
 
 const adminFeatures = [
@@ -18,6 +18,14 @@ const adminFeatures = [
         href: "/admin/announcements",
         bgColor: "bg-green-100 dark:bg-green-900/50",
         iconColor: "text-green-500"
+    },
+    {
+        title: "Manage Portfolio",
+        description: "Add, edit, or remove portfolio projects.",
+        icon: FolderKanban,
+        href: "/admin/portfolio",
+        bgColor: "bg-indigo-100 dark:bg-indigo-900/50",
+        iconColor: "text-indigo-500"
     },
     {
         title: "Manage Bookings",

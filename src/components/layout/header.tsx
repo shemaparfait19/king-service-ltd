@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { Menu, Phone, Power, Search, UserCog } from "lucide-react"
 import { Button } from "@/components/ui/button"
