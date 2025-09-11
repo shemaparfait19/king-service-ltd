@@ -30,9 +30,9 @@ export default function HeroSlider() {
         onMouseEnter={plugin.current.stop}
         onMouseLeave={plugin.current.reset}
       >
-        <CarouselContent className="h-full m-0">
+        <CarouselContent className="h-full">
           {heroImages.map((image, index) => (
-            <CarouselItem key={image.id} className="h-full p-0">
+            <CarouselItem key={image.id} className="h-full">
               <div className="relative w-full h-full">
                 <Image
                   src={image.imageUrl}
