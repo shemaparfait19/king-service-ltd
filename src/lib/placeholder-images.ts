@@ -11,6 +11,7 @@ let images: ImagePlaceholder[];
 
 try {
   if (data && Array.isArray((data as any).placeholderImages)) {
+    // Correctly access the nested array
     images = (data as any).placeholderImages;
   } else {
     images = [];

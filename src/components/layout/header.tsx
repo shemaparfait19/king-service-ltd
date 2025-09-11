@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Menu, Phone, Power, Search } from "lucide-react"
+import { Menu, Phone, Power, Search, UserCog } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -68,6 +68,11 @@ export default function SiteHeader() {
           <SearchDialog />
           <LanguageSwitcher />
           <ThemeToggle />
+           <Link href="/admin">
+              <Button variant="ghost" size="icon" aria-label="Admin Panel">
+                <UserCog className="h-5 w-5" />
+              </Button>
+            </Link>
           <Link href="/contact" className="hidden lg:inline-flex">
             <Button className="bg-accent text-accent-foreground hover:bg-accent/90">Book Now</Button>
           </Link>

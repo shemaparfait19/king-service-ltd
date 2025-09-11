@@ -8,9 +8,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Globe } from "lucide-react"
+import { usePathname, useRouter } from "next/navigation"
 
 export function LanguageSwitcher() {
-  // TODO: Implement language switching logic with an i18n library
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const switchLanguage = (locale: string) => {
+    const newPath = `/${locale}${pathname.startsWith('/en') || pathname.startsWith('/fr') ? pathname.substring(3) : pathname}`;
+    router.replace(newPath);
+  };
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -20,10 +28,10 @@ export function LanguageSwitcher() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem className="font-bold">
+        <DropdownMenuItem onClick={() => switchLanguage('en')} className="font-bold">
           English
         </DropdownMenuItem>
-        <DropdownMenuItem>
+        <DropdownMenuItem onClick={() => switchLanguage('fr')}>
           Français
         </DropdownMenuItem>
       </DropdownMenuContent>
