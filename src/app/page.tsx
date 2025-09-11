@@ -2,13 +2,12 @@ import Image from 'next/image';
 import Link from 'next/link';
 import {
   ArrowRight,
-  ChevronRight,
   Briefcase,
   Lightbulb,
   Users,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import HeroSlider from '@/components/hero-slider';
 import { services } from '@/lib/data';
@@ -37,14 +36,14 @@ export default function Home() {
           <div className="mx-auto grid grid-cols-1 gap-6 py-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
             {services.slice(0, 8).map((service) => (
               <Link href={`/services/${service.slug}`} key={service.id}>
-                <Card className="h-full hover:shadow-lg transition-shadow duration-300 group">
-                  <CardContent className="p-4 flex flex-col items-center text-center gap-4">
-                    <div className="bg-primary text-primary-foreground rounded-full p-3">
-                      <service.icon className="h-8 w-8" />
+                <Card className="h-full hover:shadow-lg transition-shadow duration-300 group bg-secondary/50 hover:bg-secondary">
+                  <CardContent className="p-6 flex flex-col items-center text-center gap-4">
+                    <div className="bg-primary text-primary-foreground rounded-full p-4">
+                      <service.icon className="h-10 w-10" />
                     </div>
-                    <h3 className="text-lg font-bold font-headline">{service.title}</h3>
-                    <p className="text-sm text-muted-foreground">{service.short_desc}</p>
-                    <Button variant="ghost" size="sm" className="mt-auto text-accent group-hover:underline">
+                    <h3 className="text-xl font-bold font-headline">{service.title}</h3>
+                    <p className="text-sm text-muted-foreground flex-grow">{service.short_desc}</p>
+                    <Button variant="link" size="sm" className="mt-auto text-accent group-hover:underline p-0">
                       Learn More <ArrowRight className="ml-2 h-4 w-4" />
                     </Button>
                   </CardContent>

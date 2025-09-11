@@ -4,6 +4,7 @@ import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
 import SiteHeader from '@/components/layout/header';
 import SiteFooter from '@/components/layout/footer';
+import AnnouncementBar from '@/components/layout/announcement-bar';
 
 export const metadata: Metadata = {
   title: 'KSTech Solutions - King of Electronics',
@@ -26,6 +27,7 @@ export default function RootLayout({
       <body className="font-body antialiased">
         <ThemeProvider storageKey="kstech-ui-theme">
           <div className="min-h-screen flex flex-col bg-background">
+            <AnnouncementBar />
             <SiteHeader />
             <main className="flex-grow">{children}</main>
             <SiteFooter />

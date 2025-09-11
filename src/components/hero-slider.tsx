@@ -30,16 +30,16 @@ export default function HeroSlider() {
         onMouseEnter={plugin.current.stop}
         onMouseLeave={plugin.current.reset}
       >
-        <CarouselContent>
-          {heroImages.map((image) => (
-            <CarouselItem key={image.id}>
-              <div className="w-full h-full">
+        <CarouselContent className="h-full">
+          {heroImages.map((image, index) => (
+            <CarouselItem key={image.id} className="h-full">
+              <div className="relative w-full h-full">
                 <Image
                   src={image.imageUrl}
                   alt={image.description}
                   fill
                   className="object-cover"
-                  priority={image.id === "hero-1"}
+                  priority={index === 0}
                   data-ai-hint={image.imageHint}
                 />
               </div>

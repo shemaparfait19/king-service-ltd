@@ -40,7 +40,7 @@ export default function AdminAnnouncementsPage() {
             <h1 className="text-4xl font-bold font-headline">Manage Announcements</h1>
             <p className="text-muted-foreground mt-2">Create, edit, and publish news and blog posts.</p>
           </div>
-          <Link href="#">
+          <Link href="/admin/announcements/new">
             <Button>
               <PlusCircle className="mr-2 h-4 w-4" />
               New Post
@@ -80,7 +80,9 @@ export default function AdminAnnouncementsPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
+                            <DropdownMenuItem asChild>
+                               <Link href="/admin/announcements/edit/1">Edit</Link>
+                            </DropdownMenuItem>
                             <DropdownMenuItem>
                                 {post.status === 'Published' ? 'Unpublish' : 'Publish'}
                             </DropdownMenuItem>
