@@ -81,7 +81,7 @@ export default function AdminAnnouncementsPage() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem asChild>
-                               <Link href="/admin/announcements/edit/1">Edit</Link>
+                               <Link href={`/admin/announcements/edit/${post.id}`}>Edit</Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem>
                                 {post.status === 'Published' ? 'Unpublish' : 'Publish'}

@@ -9,13 +9,24 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Globe } from "lucide-react"
 import { usePathname, useRouter } from "next/navigation"
+import { i18n } from "@/i18n-config"
 
 export function LanguageSwitcher() {
-  const router = useRouter();
-  const pathname = usePathname();
+  const router = useRouter()
+  const pathname = usePathname()
 
   const switchLanguage = (locale: string) => {
-    const newPath = `/${locale}${pathname.startsWith('/en') || pathname.startsWith('/fr') ? pathname.substring(3) : pathname}`;
+    if (!pathname) return
+    const segments = pathname.split('/')
+    const currentLocale = i18n.locales.find(loc => loc === segments[1])
+    
+    if (currentLocale) {
+      segments[1] = locale
+    } else {
+      segments.splice(1, 0, locale)
+    }
+
+    const newPath = segments.join('/') || '/'
     router.replace(newPath);
   };
 

@@ -13,6 +13,7 @@ import {
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { services } from "@/lib/data"
+import { type Locale } from "@/i18n-config"
 
 type SearchResultItem = {
   title: string;
@@ -24,7 +25,7 @@ type SearchResultGroup = {
   items: SearchResultItem[];
 };
 
-export function SearchDialog() {
+export function SearchDialog({ lang }: { lang: Locale }) {
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SearchResultGroup[]>([])
   const [open, setOpen] = useState(false)
@@ -36,7 +37,7 @@ export function SearchDialog() {
           s.title.toLowerCase().includes(query.toLowerCase()) ||
           s.short_desc.toLowerCase().includes(query.toLowerCase())
         )
-        .map(s => ({ title: s.title, href: `/services/${s.slug}` }));
+        .map(s => ({ title: s.title, href: `/${lang}/services/${s.slug}` }));
 
       const newResults: SearchResultGroup[] = [];
       if (serviceResults.length > 0) {
@@ -48,7 +49,7 @@ export function SearchDialog() {
     } else {
       setResults([]);
     }
-  }, [query]);
+  }, [query, lang]);
   
   useEffect(() => {
     if (!open) {
