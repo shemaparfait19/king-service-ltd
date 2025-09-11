@@ -3,6 +3,9 @@ import { Inter, Space_Grotesk } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
 import { Toaster } from '@/components/ui/toaster';
+import AnnouncementBar from '@/components/layout/announcement-bar';
+import SiteHeader from '@/components/layout/header';
+import SiteFooter from '@/components/layout/footer';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -29,8 +32,13 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-body antialiased`}>
         <ThemeProvider storageKey="kstech-ui-theme">
-          {children}
-          <Toaster />
+            <div className="min-h-screen flex flex-col bg-background">
+              <AnnouncementBar />
+              <SiteHeader />
+              <main className="flex-grow">{children}</main>
+              <SiteFooter />
+            </div>
+            <Toaster />
         </ThemeProvider>
       </body>
     </html>
