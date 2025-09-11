@@ -28,20 +28,20 @@ const adminFeatures = [
         iconColor: "text-indigo-500"
     },
     {
+        title: "Picture Library",
+        description: "Upload and manage site images.",
+        icon: ImageIcon,
+        href: "/admin/images",
+        bgColor: "bg-purple-100 dark:bg-purple-900/50",
+        iconColor: "text-purple-500"
+    },
+    {
         title: "Manage Bookings",
         description: "View and update client service bookings.",
         icon: CalendarCheck,
         href: "#",
         bgColor: "bg-yellow-100 dark:bg-yellow-900/50",
         iconColor: "text-yellow-500"
-    },
-    {
-        title: "Picture Library",
-        description: "Upload and manage site images.",
-        icon: ImageIcon,
-        href: "#",
-        bgColor: "bg-purple-100 dark:bg-purple-900/50",
-        iconColor: "text-purple-500"
     },
     {
         title: "Language Content",
