@@ -17,7 +17,8 @@ import {
   PenTool,
   Icon,
 } from 'lucide-react';
-import type { Service, FaqItem } from './definitions';
+import type { Service, FaqItem, BlogPost, PortfolioProject } from './definitions';
+import { PlaceHolderImages } from './placeholder-images';
 
 export const services: Service[] = [
   {
@@ -54,7 +55,9 @@ export const services: Service[] = [
     short_desc: 'Safe and efficient gas cooker repair.',
     long_desc: 'Our certified technicians handle all types of gas cooker repairs, including ignition problems, gas leaks, and uneven heating. Safety is our top priority.',
     details: ['Igniter repair', 'Gas leak detection', 'Burner issues', 'Oven temperature calibration'],
-    gallery: []
+    gallery: [
+      { id: 'gas-cooker', imageHint: 'gas cooker', imageUrl: 'https://picsum.photos/seed/gascooker/600/400' },
+    ]
   },
   {
     id: 4,
@@ -64,7 +67,9 @@ export const services: Service[] = [
     short_desc: 'Keep your car cool with our AC services.',
     long_desc: 'We offer quick and affordable car air conditioning refilling and maintenance services to ensure you drive in comfort, no matter the weather.',
     details: ['Refrigerant top-up', 'Leak detection and repair', 'AC system diagnostics', 'Compressor check'],
-    gallery: []
+    gallery: [
+       { id: 'car-ac', imageHint: 'car air conditioning', imageUrl: 'https://picsum.photos/seed/carac/600/400' },
+    ]
   },
   {
     id: 5,
@@ -74,7 +79,9 @@ export const services: Service[] = [
     short_desc: 'Reliable generator maintenance and repair.',
     long_desc: 'Don\'t get left in the dark. We service and repair all types of generators to ensure you have a reliable backup power source when you need it most.',
     details: ['Engine servicing', 'Electrical component repair', 'Fuel system cleaning', 'Automatic transfer switch issues'],
-    gallery: []
+    gallery: [
+        { id: 'generator', imageHint: 'electrical generator', imageUrl: 'https://picsum.photos/seed/generator/600/400' },
+    ]
   },
   {
     id: 6,
@@ -84,7 +91,9 @@ export const services: Service[] = [
     short_desc: 'Comprehensive repair for all your electronics.',
     long_desc: 'From TVs and audio systems to specialized gadgets, our skilled team can fix a wide range of electronic devices. If it has a circuit board, we can probably fix it.',
     details: ['TV and display repair', 'Audio system servicing', 'Small appliance repair', 'Custom electronics troubleshooting'],
-    gallery: []
+    gallery: [
+      { id: 'electronics-repair', imageHint: 'circuit board', imageUrl: 'https://picsum.photos/seed/elecrepair/600/400' },
+    ]
   },
   {
     id: 7,
@@ -94,7 +103,9 @@ export const services: Service[] = [
     short_desc: 'Expert AC installation and regular maintenance.',
     long_desc: 'We provide professional installation of all types of air conditioning units, as well as regular maintenance plans to keep your system running efficiently and extend its lifespan.',
     details: ['Split and central AC installation', 'Regular cleaning and servicing', 'Efficiency optimization', 'Ductwork inspection'],
-    gallery: []
+    gallery: [
+       { id: 'ac-install', imageHint: 'air conditioner unit', imageUrl: 'https://picsum.photos/seed/acinstall/600/400' },
+    ]
   },
   {
     id: 8,
@@ -104,7 +115,9 @@ export const services: Service[] = [
     short_desc: 'Protect your property with certified fire alarm systems.',
     long_desc: 'We install and maintain certified fire alarm systems for residential and commercial properties, ensuring compliance with safety regulations and providing peace of mind.',
     details: ['System design and installation', 'Regular testing and inspection', 'Smoke and heat detector maintenance', 'Emergency lighting checks'],
-    gallery: []
+    gallery: [
+        { id: 'fire-alarm', imageHint: 'fire alarm', imageUrl: 'https://picsum.photos/seed/firealarm/600/400' },
+    ]
   },
   {
     id: 9,
@@ -126,7 +139,9 @@ export const services: Service[] = [
     short_desc: 'Smart solutions for a connected world.',
     long_desc: 'We develop and deploy custom Internet of Things (IoT) solutions to automate processes, monitor assets, and gather valuable data for your home or business.',
     details: ['Smart home automation', 'Industrial IoT sensors', 'Custom device integration', 'Data dashboards'],
-    gallery: []
+    gallery: [
+        { id: 'iot-solution', imageHint: 'smart home dashboard', imageUrl: 'https://picsum.photos/seed/iotsolution/600/400' },
+    ]
   },
   {
     id: 11,
@@ -160,7 +175,9 @@ export const services: Service[] = [
     short_desc: 'Keeping your industrial machinery running.',
     long_desc: 'We specialize in troubleshooting and repairing complex electronic systems in industrial machinery, minimizing downtime and maximizing productivity.',
     details: ['PLC troubleshooting', 'Variable frequency drive (VFD) repair', 'Control panel servicing', 'Robotics and automation'],
-    gallery: []
+    gallery: [
+        { id: 'industrial-repair', imageHint: 'factory machine', imageUrl: 'https://picsum.photos/seed/industrial/600/400' },
+    ]
   },
   {
     id: 14,
@@ -170,7 +187,9 @@ export const services: Service[] = [
     short_desc: 'Comprehensive electrical services for all needs.',
     long_desc: 'From residential wiring to commercial electrical installations, our licensed electricians provide safe, reliable, and code-compliant electrical solutions.',
     details: ['New construction wiring', 'Electrical panel upgrades', 'Lighting installation', 'Safety inspections'],
-    gallery: []
+    gallery: [
+        { id: 'electrical', imageHint: 'electrical wiring', imageUrl: 'https://picsum.photos/seed/wiring/600/400' },
+    ]
   },
   {
     id: 15,
@@ -180,7 +199,9 @@ export const services: Service[] = [
     short_desc: 'Building the next generation of technicians.',
     long_desc: 'We are committed to fostering talent. Our internship and training programs offer hands-on experience and expert mentorship in the field of electronics and IT.',
     details: ['Structured internship programs', 'Practical skills workshops', 'On-the-job training', 'Career development'],
-    gallery: []
+    gallery: [
+        { id: 'training', imageHint: 'students learning', imageUrl: 'https://picsum.photos/seed/training/600/400' },
+    ]
   },
   {
     id: 16,
@@ -190,7 +211,9 @@ export const services: Service[] = [
     short_desc: 'Creative design services for your brand.',
     long_desc: 'Beyond technical services, we also offer creative graphic design solutions to help build your brand identity, from logos to marketing materials.',
     details: ['Logo design and branding', 'Marketing collateral', 'Digital and print advertisements', 'UI/UX design concepts'],
-    gallery: []
+    gallery: [
+      { id: 'graphic-design', imageHint: 'design process', imageUrl: 'https://picsum.photos/seed/design/600/400' },
+    ]
   }
 ];
 
@@ -216,3 +239,103 @@ export const faqs: FaqItem[] = [
         answer: "You can book a service by calling us at +250 787 649 480, sending us a message on WhatsApp, or filling out the contact form on our website. For specific services, you can also use the 'Request a Quote' form on the service page."
     }
 ];
+
+export const blogPosts: BlogPost[] = [
+  {
+    id: 1,
+    title: '5 Signs Your Refrigerator Needs a Repair',
+    slug: '5-signs-refrigerator-repair',
+    excerpt: 'Is your fridge making strange noises? Food not staying cold? It might be time for a check-up. Learn the key warning signs to look out for to prevent a major appliance meltdown.',
+    content: `
+      <p>Your refrigerator is one of the most important appliances in your home, running 24/7 to keep your food fresh. When it starts to fail, it can be a major inconvenience. Here are five key signs to watch out for that indicate your fridge might need professional repair.</p>
+      
+      <h3 class="font-headline text-2xl mt-8 mb-4">1. Excessive Condensation</h3>
+      <p>A little condensation on the inside of your fridge can be normal, but if you\'re noticing excessive moisture or "sweating," it could mean the door seals aren\'t working correctly. This forces your fridge to work harder, increasing energy consumption.</p>
+
+      <h3 class="font-headline text-2xl mt-8 mb-4">2. The Motor is Constantly Running</h3>
+      <p>It\'s normal for a refrigerator\'s motor to kick on and off. However, if you notice the motor running continuously, it\'s a sign that the cooling system is struggling to maintain the set temperature. This could be due to a variety of issues, from dirty condenser coils to a faulty thermostat.</p>
+
+      <h3 class="font-headline text-2xl mt-8 mb-4">3. Food is Spoiling Quickly</h3>
+      <p>If you find that your milk is souring before its expiration date or vegetables are wilting faster than usual, your refrigerator is likely not cooling properly. This is a critical issue that needs immediate attention to prevent food waste and potential health risks.</p>
+
+      <h3 class="font-headline text-2xl mt-8 mb-4">4. Strange Noises</h3>
+      <p>While refrigerators make some noise, loud buzzing, clicking, or rattling sounds are not normal. These could indicate problems with the compressor, fans, or other mechanical parts. Don\'t ignore these auditory warnings!</p>
+
+      <h3 class="font-headline text-2xl mt-8 mb-4">5. The Freezer is Over-Icing</h3>
+      <p>A thick layer of ice in your freezer (especially in a frost-free model) is a red flag. It can be caused by a faulty defrost system, which can lead to temperature inconsistencies and reduce freezer efficiency.</p>
+
+      <p class="mt-8">If you notice any of these signs, it\'s best to call a professional technician. At KSTech Solutions, we can diagnose and fix the problem quickly and efficiently. <a href="/contact" class="text-accent hover:underline">Contact us today!</a></p>
+    `,
+    date: 'July 15, 2024',
+    author: 'Admin',
+    category: 'Appliance Repair',
+    image: PlaceHolderImages.find(p => p.id === 'service-fridge'),
+  },
+  {
+    id: 2,
+    title: 'The Benefits of a Professionally Installed CCTV System',
+    slug: 'benefits-cctv-system',
+    excerpt: 'Home and business security is more important than ever. Discover the advantages of a professional CCTV installation, from remote monitoring to deterring potential intruders.',
+    date: 'July 10, 2024',
+    author: 'Admin',
+    category: 'Security',
+    content: '<p>Coming soon...</p>',
+    image: PlaceHolderImages.find(p => p.id === 'service-cctv'),
+  },
+  {
+    id: 3,
+    title: 'Getting Started with Solar Power for Your Home',
+    slug: 'getting-started-solar-power',
+    excerpt: 'Thinking about making the switch to solar? This guide breaks down the basics of residential solar systems, including panel types, battery storage, and potential savings.',
+    date: 'July 5, 2024',
+    author: 'Admin',
+    category: 'Energy',
+    content: '<p>Coming soon...</p>',
+    image: PlaceHolderImages.find(p => p.id === 'service-solar'),
+  },
+];
+
+export const portfolioProjects: PortfolioProject[] = [
+    {
+      id: 1,
+      title: 'Commercial Complex Security & Network Overhaul',
+      category: 'CCTV & Internet',
+      description: 'Designed and deployed a state-of-the-art surveillance system with over 50 IP cameras and a robust, building-wide mesh WiFi network for a multi-tenant commercial building in Nyamata.',
+      image: PlaceHolderImages.find(p => p.id === 'portfolio-1'),
+    },
+    {
+      id: 2,
+      title: 'Residential Solar Power Implementation',
+      category: 'Solar Systems',
+      description: 'Installed a complete 5kW off-grid solar system for a rural household, including panels, battery storage, and inverter, providing reliable, 24/7 electricity.',
+      image: PlaceHolderImages.find(p => p.id === 'service-solar'),
+    },
+    {
+      id: 3,
+      title: 'Industrial Machine Control Panel Repair',
+      category: 'Industrial Electronics',
+      description: 'Successfully diagnosed and repaired a critical failure in a PLC control panel for a local manufacturing plant, restoring production within 24 hours and preventing costly downtime.',
+      image: PlaceHolderImages.find(p => p.id === 'hero-2'),
+    },
+     {
+      id: 4,
+      title: 'Smart Home Automation for Modern Villa',
+      category: 'IoT Solutions',
+      description: 'Implemented a comprehensive IoT solution including smart lighting, climate control, automated blinds, and security, all controllable via a central mobile app.',
+      image: { id: 'smart-home', imageHint: 'smart home app', imageUrl: 'https://picsum.photos/seed/smarthome/700/500' },
+    },
+    {
+      id: 5,
+      title: 'Biomedical Equipment Calibration for Clinic',
+      category: 'Biomedical Repair',
+      description: 'Performed annual calibration and preventive maintenance on diagnostic equipment for a regional health clinic, ensuring accurate readings and patient safety.',
+      image: PlaceHolderImages.find(p => p.id === 'service-detail-1'),
+    },
+    {
+      id: 6,
+      title: 'Community Center WiFi Hotspot',
+      category: 'WiFi Installation',
+      description: 'Provided free public WiFi access for a community center by installing a managed, high-capacity wireless network capable of supporting hundreds of simultaneous users.',
+      image: PlaceHolderImages.find(p => p.id === 'service-wifi'),
+    },
+  ];

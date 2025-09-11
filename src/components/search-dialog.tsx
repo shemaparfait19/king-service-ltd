@@ -12,11 +12,12 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
-import { services } from "@/lib/data"
+import { services, blogPosts, portfolioProjects } from "@/lib/data"
 
 type SearchResultItem = {
   title: string;
   href: string;
+  excerpt?: string;
 };
 
 type SearchResultGroup = {
@@ -31,18 +32,40 @@ export function SearchDialog() {
 
   useEffect(() => {
     if (query.length > 2) {
+      const lowerCaseQuery = query.toLowerCase();
+      
       const serviceResults = services
         .filter(s =>
-          s.title.toLowerCase().includes(query.toLowerCase()) ||
-          s.short_desc.toLowerCase().includes(query.toLowerCase())
+          s.title.toLowerCase().includes(lowerCaseQuery) ||
+          s.short_desc.toLowerCase().includes(lowerCaseQuery)
         )
-        .map(s => ({ title: s.title, href: `/services/${s.slug}` }));
+        .map(s => ({ title: s.title, href: `/services/${s.slug}`, excerpt: s.short_desc }));
+      
+      const blogResults = blogPosts
+        .filter(p =>
+          p.title.toLowerCase().includes(lowerCaseQuery) ||
+          p.excerpt.toLowerCase().includes(lowerCaseQuery)
+        )
+        .map(p => ({ title: p.title, href: `/blog/${p.slug}`, excerpt: p.excerpt }));
+        
+      const portfolioResults = portfolioProjects
+        .filter(p =>
+          p.title.toLowerCase().includes(lowerCaseQuery) ||
+          p.description.toLowerCase().includes(lowerCaseQuery)
+        )
+        .map(p => ({ title: p.title, href: `/portfolio`, excerpt: p.description }));
+
 
       const newResults: SearchResultGroup[] = [];
       if (serviceResults.length > 0) {
         newResults.push({ group: "Services", items: serviceResults });
       }
-      // Add other searchable sources here (e.g., blog, portfolio)
+      if (blogResults.length > 0) {
+        newResults.push({ group: "Announcements", items: blogResults });
+      }
+      if (portfolioResults.length > 0) {
+        newResults.push({ group: "Portfolio Projects", items: portfolioResults });
+      }
 
       setResults(newResults);
     } else {
@@ -72,7 +95,7 @@ export function SearchDialog() {
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
             <Input
-              placeholder="Search services, blog, projects..."
+              placeholder="Search services, announcements, projects..."
               className="pl-10"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
@@ -92,7 +115,10 @@ export function SearchDialog() {
                   {resultGroup.items.map((item) => (
                      <Link href={item.href} key={item.href} onClick={() => setOpen(false)}>
                       <div className="p-3 rounded-md border hover:bg-secondary cursor-pointer transition-colors">
-                        {item.title}
+                        <p className="font-semibold">{item.title}</p>
+                        {item.excerpt && (
+                            <p className="text-sm text-muted-foreground line-clamp-2">{item.excerpt}</p>
+                        )}
                       </div>
                     </Link>
                   ))}
