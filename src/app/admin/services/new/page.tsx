@@ -9,13 +9,13 @@ import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
-import { Trash, PlusCircle } from 'lucide-react';
+import { Trash, PlusCircle, Upload } from 'lucide-react';
 
 const serviceSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
   short_desc: z.string().min(10, 'Short description must be at least 10 characters'),
   long_desc: z.string().min(20, 'Long description must be at least 20 characters'),
-  details: z.array(z.string().min(1, 'Detail cannot be empty')).min(1, 'At least one detail is required'),
+  details: z.array(z.object({ value: z.string().min(1, 'Detail cannot be empty')})).min(1, 'At least one detail is required'),
 });
 
 type ServiceFormValues = z.infer<typeof serviceSchema>;
@@ -33,7 +33,7 @@ export default function NewServicePage() {
       title: '',
       short_desc: '',
       long_desc: '',
-      details: [''],
+      details: [{ value: '' }],
     },
   });
 
@@ -44,7 +44,7 @@ export default function NewServicePage() {
 
   const onSubmit: SubmitHandler<ServiceFormValues> = (data) => {
     console.log('New Service:', data);
-    // Here you would typically call an API to create the service
+    // Here you would typically call an API to create the service and upload images
     router.push('/admin/services');
   };
 
@@ -79,22 +79,41 @@ export default function NewServicePage() {
                 </div>
                 
                 <div className="grid gap-2">
-                    <Label>Service Details</Label>
+                    <Label>Service Details / "What's Included"</Label>
                     <div className="grid gap-3">
                         {fields.map((field, index) => (
                             <div key={field.id} className="flex items-center gap-2">
-                                <Input {...register(`details.${index}` as const)} />
-                                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)}>
+                                <Input {...register(`details.${index}.value` as const)} />
+                                <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} disabled={fields.length <= 1}>
                                     <Trash className="h-4 w-4 text-destructive" />
                                 </Button>
                             </div>
                         ))}
                     </div>
-                     <Button type="button" variant="outline" size="sm" className="mt-2 w-fit" onClick={() => append("")}>
+                     <Button type="button" variant="outline" size="sm" className="mt-2 w-fit" onClick={() => append({value: ""})}>
                         <PlusCircle className="mr-2 h-4 w-4" />
                         Add Detail
                     </Button>
-                    {errors.details && <p className="text-destructive text-sm">{errors.details.message}</p>}
+                    {errors.details && <p className="text-destructive text-sm">At least one detail is required.</p>}
+                </div>
+
+                <div className="grid gap-2">
+                    <Label htmlFor="images">Service Images</Label>
+                    <div className="flex items-center justify-center w-full">
+                        <Label
+                            htmlFor="image-upload"
+                            className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-background hover:bg-muted"
+                        >
+                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                <Upload className="w-8 h-8 mb-4 text-muted-foreground" />
+                                <p className="mb-2 text-sm text-muted-foreground">
+                                    <span className="font-semibold">Click to upload</span> or drag and drop
+                                </p>
+                                <p className="text-xs text-muted-foreground">PNG, JPG, or WEBP (multiple images allowed)</p>
+                            </div>
+                            <Input id="image-upload" type="file" multiple className="hidden" />
+                        </Label>
+                    </div> 
                 </div>
 
                 <div className="flex justify-end gap-4 mt-4">

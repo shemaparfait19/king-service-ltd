@@ -6,6 +6,7 @@ import { Toaster } from '@/components/ui/toaster';
 import AnnouncementBar from '@/components/layout/announcement-bar';
 import SiteHeader from '@/components/layout/header';
 import SiteFooter from '@/components/layout/footer';
+import { AppWithSplashScreen } from '@/components/splash-screen';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -32,12 +33,14 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${inter.variable} ${spaceGrotesk.variable} font-body antialiased`}>
         <ThemeProvider storageKey="kstech-ui-theme">
-            <div className="min-h-screen flex flex-col bg-background">
-              <AnnouncementBar />
-              <SiteHeader />
-              <main className="flex-grow">{children}</main>
-              <SiteFooter />
-            </div>
+            <AppWithSplashScreen>
+              <div className="min-h-screen flex flex-col bg-background">
+                <AnnouncementBar />
+                <SiteHeader />
+                <main className="flex-grow">{children}</main>
+                <SiteFooter />
+              </div>
+            </AppWithSplashScreen>
             <Toaster />
         </ThemeProvider>
       </body>
