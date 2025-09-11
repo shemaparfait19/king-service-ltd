@@ -1,3 +1,70 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "hero-1",
+      "description": "Technician working on a complex circuit board.",
+      "imageUrl": "https://picsum.photos/seed/tech1/1920/1080",
+      "imageHint": "technician circuit"
+    },
+    {
+      "id": "hero-2",
+      "description": "Clean industrial machinery.",
+      "imageUrl": "https://picsum.photos/seed/industry2/1920/1080",
+      "imageHint": "industrial equipment"
+    },
+    {
+      "id": "hero-3",
+      "description": "Server room with networking equipment.",
+      "imageUrl": "https://picsum.photos/seed/server3/1920/1080",
+      "imageHint": "server room"
+    },
+    {
+      "id": "service-fridge",
+      "description": "Open refrigerator with tools.",
+      "imageUrl": "https://picsum.photos/seed/fridge4/600/400",
+      "imageHint": "refrigerator repair"
+    },
+    {
+      "id": "service-wifi",
+      "description": "WiFi router with glowing lights.",
+      "imageUrl": "https://picsum.photos/seed/wifi5/600/400",
+      "imageHint": "wifi router"
+    },
+    {
+      "id": "service-cctv",
+      "description": "CCTV camera mounted on a wall.",
+      "imageUrl": "https://picsum.photos/seed/cctv6/600/400",
+      "imageHint": "security camera"
+    },
+    {
+      "id": "service-solar",
+      "description": "Solar panels on a roof.",
+      "imageUrl": "https://picsum.photos/seed/solar7/600/400",
+      "imageHint": "solar panels"
+    },
+    {
+      "id": "portfolio-1",
+      "description": "Technician installing CCTV cameras in a large building.",
+      "imageUrl": "https://picsum.photos/seed/install8/700/500",
+      "imageHint": "security installation"
+    },
+    {
+      "id": "service-detail-1",
+      "description": "Close-up of a biomedical equipment being repaired.",
+      "imageUrl": "https://picsum.photos/seed/biomed9/800/600",
+      "imageHint": "medical equipment"
+    },
+    {
+      "id": "about-hero",
+      "description": "Bright modern office interior.",
+      "imageUrl": "https://picsum.photos/seed/office11/1920/1080",
+      "imageHint": "office interior"
+    },
+    {
+      "id": "ceo-portrait",
+      "description": "Portrait of a professional man.",
+      "imageUrl": "https://picsum.photos/seed/ceo12/400/400",
+      "imageHint": "professional portrait"
+    }
+  ]
 }
