@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SearchDialog } from "@/components/search-dialog"
 import { services } from "@/lib/data"
@@ -87,11 +87,18 @@ export default function SiteHeader() {
                 </Button>
               </SheetTrigger>
               <SheetContent side="left">
+                <SheetHeader>
+                  <SheetTitle>
+                    <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
+                      <Power className="h-6 w-6 text-primary" />
+                      <span className="font-bold font-headline">KSTech Solutions</span>
+                    </Link>
+                  </SheetTitle>
+                  <SheetDescription>
+                    The King of Electronics
+                  </SheetDescription>
+                </SheetHeader>
                 <nav className="grid gap-6 text-lg font-medium mt-8">
-                  <Link href="/" className="flex items-center gap-2 text-lg font-semibold mb-4">
-                     <Power className="h-6 w-6 text-primary" />
-                     <span className="font-bold font-headline">KSTech Solutions</span>
-                  </Link>
                   {navLinks.map(link => (
                       <Link key={link.href} href={link.href} className="text-muted-foreground hover:text-primary transition-colors">
                           {link.label}
