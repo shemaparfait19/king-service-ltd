@@ -32,7 +32,7 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function ServiceDetailPage({ params }: Props) {
+export default async function ServiceDetailPage({ params }: Props) {
   const service = services.find((s) => s.slug === params.slug);
   const otherServices = services.filter(s => s.slug !== params.slug).slice(0, 5);
 
