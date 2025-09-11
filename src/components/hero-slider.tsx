@@ -10,8 +10,6 @@ import {
   Carousel,
   CarouselContent,
   CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
 } from "@/components/ui/carousel"
 import { Button } from "./ui/button"
 import { MoveRight } from "lucide-react"
@@ -23,17 +21,16 @@ export default function HeroSlider() {
   )
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full overflow-hidden">
       <Carousel
         plugins={[plugin.current]}
         className="w-full h-full"
         onMouseEnter={plugin.current.stop}
         onMouseLeave={plugin.current.reset}
       >
-        <CarouselContent className="h-full">
+        <CarouselContent className="-ml-0 h-full">
           {heroImages.map((image, index) => (
-            <CarouselItem key={image.id} className="h-full">
-              <div className="relative w-full h-full">
+            <CarouselItem key={image.id} className="pl-0 relative w-full h-full">
                 <Image
                   src={image.imageUrl}
                   alt={image.description}
@@ -42,12 +39,9 @@ export default function HeroSlider() {
                   priority={index === 0}
                   data-ai-hint={image.imageHint}
                 />
-              </div>
             </CarouselItem>
           ))}
         </CarouselContent>
-        <CarouselPrevious className="absolute left-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex" />
-        <CarouselNext className="absolute right-4 top-1/2 -translate-y-1/2 z-10 hidden md:flex" />
       </Carousel>
       <div className="absolute inset-0 bg-black/60" />
       <div className="absolute inset-0 flex flex-col items-center justify-center text-center text-white p-4">
@@ -66,7 +60,7 @@ export default function HeroSlider() {
                 </Button>
             </Link>
             <Link href="/contact">
-                <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-primary">
+                <Button size="lg" variant="outline" className="border-white text-white bg-transparent hover:bg-white hover:text-black">
                     Contact Us
                 </Button>
             </Link>
