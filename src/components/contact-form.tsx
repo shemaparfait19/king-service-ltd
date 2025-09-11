@@ -1,7 +1,7 @@
 "use client"
 
-import { useFormState, useFormStatus } from "react-dom"
-import { useEffect } from "react"
+import { useActionState, useEffect } from "react"
+import { useFormStatus } from "react-dom"
 import { Mail, Phone, User, MessageSquare } from "lucide-react"
 
 import { submitContactForm, type ContactFormState } from "@/lib/actions"
@@ -22,7 +22,7 @@ function SubmitButton() {
 
 export function ContactForm({title, description}: {title: string, description: string}) {
   const initialState: ContactFormState = { message: "", success: false }
-  const [state, dispatch] = useFormState(submitContactForm, initialState)
+  const [state, dispatch] = useActionState(submitContactForm, initialState)
   const { toast } = useToast()
 
   useEffect(() => {
