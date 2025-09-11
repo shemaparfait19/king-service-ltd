@@ -1,77 +1,76 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, Briefcase, Mail, BarChart2 } from 'lucide-react';
+import { Newspaper, Wrench, Languages, ImageIcon, CalendarCheck } from 'lucide-react';
+import Link from 'next/link';
+
+const adminFeatures = [
+    {
+        title: "Manage Services",
+        description: "Add, edit, or remove service listings.",
+        icon: Wrench,
+        href: "/admin/services",
+        bgColor: "bg-blue-100 dark:bg-blue-900/50",
+        iconColor: "text-blue-500"
+    },
+    {
+        title: "Manage Announcements",
+        description: "Create and publish news and announcements.",
+        icon: Newspaper,
+        href: "/admin/announcements",
+        bgColor: "bg-green-100 dark:bg-green-900/50",
+        iconColor: "text-green-500"
+    },
+    {
+        title: "Manage Bookings",
+        description: "View and update client service bookings.",
+        icon: CalendarCheck,
+        href: "#",
+        bgColor: "bg-yellow-100 dark:bg-yellow-900/50",
+        iconColor: "text-yellow-500"
+    },
+    {
+        title: "Picture Library",
+        description: "Upload and manage site images.",
+        icon: ImageIcon,
+        href: "#",
+        bgColor: "bg-purple-100 dark:bg-purple-900/50",
+        iconColor: "text-purple-500"
+    },
+    {
+        title: "Language Content",
+        description: "Edit content for English and French.",
+        icon: Languages,
+        href: "#",
+        bgColor: "bg-red-100 dark:bg-red-900/50",
+        iconColor: "text-red-500"
+    }
+]
 
 export default function AdminDashboardPage() {
-    // These would come from a database or API in a real application
-    const stats = {
-        visitors: 1250,
-        jobApplicants: 12,
-        contactSubmissions: 45,
-        servicesRequested: 78,
-    };
-
     return (
         <div className="bg-secondary/50 flex-grow">
             <div className="container py-12">
                 <header className="mb-12">
-                    <h1 className="text-4xl font-bold font-headline">Admin Dashboard</h1>
-                    <p className="text-muted-foreground mt-2">Welcome back, Admin. Here's a summary of your site's activity.</p>
+                    <h1 className="text-4xl font-bold font-headline">Admin Control Center</h1>
+                    <p className="text-muted-foreground mt-2">Select a category below to manage your website's content.</p>
                 </header>
 
                 <main>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-sm font-medium">Total Visitors</CardTitle>
-                                <Users className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{stats.visitors.toLocaleString()}</div>
-                                <p className="text-xs text-muted-foreground">+5.2% from last month</p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-sm font-medium">Job Applicants</CardTitle>
-                                <Briefcase className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">+{stats.jobApplicants}</div>
-                                <p className="text-xs text-muted-foreground">3 new applications</p>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-sm font-medium">Contact Messages</CardTitle>
-                                <Mail className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">+{stats.contactSubmissions}</div>
-                                <p className="text-xs text-muted-foreground">10 unread</p>
-                            </CardContent>
-                        </Card>
-                         <Card>
-                            <CardHeader className="flex flex-row items-center justify-between pb-2">
-                                <CardTitle className="text-sm font-medium">Services Requested</CardTitle>
-                                <BarChart2 className="h-4 w-4 text-muted-foreground" />
-                            </CardHeader>
-                            <CardContent>
-                                <div className="text-2xl font-bold">{stats.servicesRequested}</div>
-                                <p className="text-xs text-muted-foreground">+12 since last week</p>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    <div className="mt-12">
-                         <Card>
-                            <CardHeader>
-                                <CardTitle>Recent Activity</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <p className="text-muted-foreground">Activity feed is under construction.</p>
-                                {/* In a real app, this would be a list or table of recent events */}
-                            </CardContent>
-                        </Card>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {adminFeatures.map((feature) => (
+                             <Link href={feature.href} key={feature.title}>
+                                <Card className="h-full hover:shadow-lg transition-shadow duration-300 group hover:-translate-y-1">
+                                    <CardHeader className="flex flex-row items-center gap-4">
+                                        <div className={`p-4 rounded-lg ${feature.bgColor}`}>
+                                            <feature.icon className={`h-8 w-8 ${feature.iconColor}`} />
+                                        </div>
+                                        <CardTitle className="font-headline text-xl">{feature.title}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <p className="text-muted-foreground">{feature.description}</p>
+                                    </CardContent>
+                                </Card>
+                            </Link>
+                        ))}
                     </div>
                 </main>
             </div>
