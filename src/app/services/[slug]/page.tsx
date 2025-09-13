@@ -32,13 +32,15 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function ServiceDetailPage({ params }: Props) {
+export default async function ServiceDetailPage({ params }: Props) {
   const service = services.find((s) => s.slug === params.slug);
-  const otherServices = services.filter(s => s.slug !== params.slug).slice(0, 5);
 
   if (!service) {
     notFound();
   }
+  
+  const otherServices = services.filter(s => s.slug !== params.slug).slice(0, 5);
+  const validGallery = service.gallery.filter(Boolean);
 
   return (
     <>
@@ -127,11 +129,11 @@ export default function ServiceDetailPage({ params }: Props) {
                 ))}
               </ul>
 
-              {service.gallery.length > 0 && (
+              {validGallery.length > 0 && (
                 <>
                   <h2 className="font-headline mt-12">Our Work</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {service.gallery.map((image) => (
+                    {validGallery.map((image) => (
                       <Image
                         key={image.id}
                         src={image.imageUrl}
