@@ -5,16 +5,40 @@ import {
   Briefcase,
   Lightbulb,
   Users,
+  Wrench,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import HeroSlider from '@/components/hero-slider';
-import { services } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import type { Service } from '@/lib/definitions';
+import { serviceIcons } from '@/lib/data';
+import { collection, getDocs, limit, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 
-export default function Home() {
+async function getServices(): Promise<Service[]> {
+  const servicesCollection = collection(db, 'services');
+  const q = query(servicesCollection, limit(8));
+  const servicesSnapshot = await getDocs(q);
+  const servicesList = servicesSnapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      title: data.title,
+      slug: data.slug,
+      short_desc: data.short_desc,
+      long_desc: data.long_desc,
+      details: data.details,
+      icon: serviceIcons[data.slug as keyof typeof serviceIcons] || Wrench,
+    } as Service;
+  });
+  return servicesList;
+}
+
+export default async function Home() {
   const portfolioImage = PlaceHolderImages.find(p => p.id === 'portfolio-1');
+  const services = await getServices();
 
   return (
     <div className="flex flex-col min-h-[100dvh]">
@@ -22,7 +46,7 @@ export default function Home() {
         <HeroSlider />
       </section>
 
-      <section id="services" className="w-full py-12 md:py-24 lg:py-32 bg-background">
+      <section id="services" className="w-full py-12 md:py-24 lg:py-32 bg-secondary">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <div className="space-y-2">
@@ -33,28 +57,30 @@ export default function Home() {
               </p>
             </div>
           </div>
-          <div className="mx-auto grid grid-cols-1 gap-8 py-12 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-             {services.slice(0, 8).map((service) => (
-                <Card key={service.id} className="flex flex-col overflow-hidden group hover:shadow-lg transition-shadow duration-300">
+          <div className="mx-auto grid grid-cols-1 gap-8 py-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+             {services.map((service) => {
+                const serviceImage = PlaceHolderImages.find(p => p.id === `service-${service.slug}`)
+                return (
+                <Card key={service.id} className="flex flex-col overflow-hidden group hover:shadow-xl transition-shadow duration-300 bg-background">
                     <Link href={`/services/${service.slug}`} className="flex flex-col h-full">
-                        {service.gallery.length > 0 && service.gallery[0] && (
-                            <CardHeader className="p-0 border-b">
-                                <div className="overflow-hidden aspect-[4/3] relative">
-                                    <Image
-                                        src={service.gallery[0].imageUrl}
-                                        alt={service.title}
-                                        fill
-                                        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                                        className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                        data-ai-hint={service.gallery[0].imageHint}
-                                    />
+                        <CardHeader className="p-0 border-b relative aspect-[4/3] overflow-hidden">
+                           {serviceImage ? (
+                                <Image
+                                    src={serviceImage.imageUrl}
+                                    alt={service.title}
+                                    fill
+                                    className="object-cover group-hover:scale-105 transition-transform duration-300"
+                                    data-ai-hint={serviceImage.imageHint}
+                                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                />
+                            ) : (
+                                <div className="bg-muted flex items-center justify-center h-full">
+                                    <service.icon className="h-16 w-16 text-muted-foreground" />
                                 </div>
-                            </CardHeader>
-                        )}
-                        <CardContent className="p-6 flex flex-col items-center text-center gap-4 flex-grow">
-                            <div className="bg-primary text-primary-foreground rounded-full p-3 -mt-12 z-10 border-4 border-background">
-                            <service.icon className="h-8 w-8" />
-                            </div>
+                            )}
+                        </CardHeader>
+                        <CardContent className="p-6 flex flex-col items-start text-left gap-2 flex-grow">
+                            <service.icon className="h-8 w-8 text-accent mb-2" />
                             <h3 className="text-xl font-bold font-headline">{service.title}</h3>
                             <p className="text-sm text-muted-foreground flex-grow">{service.short_desc}</p>
                             <Button variant="link" size="sm" className="mt-auto text-accent group-hover:underline p-0">
@@ -63,7 +89,7 @@ export default function Home() {
                         </CardContent>
                     </Link>
                 </Card>
-            ))}
+            )})}
           </div>
           <div className="flex justify-center">
             <Link href="/services">
@@ -76,7 +102,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="portfolio" className="w-full py-12 md:py-24 lg:py-32 bg-secondary">
+      <section id="portfolio" className="w-full py-12 md:py-24 lg:py-32 bg-background">
         <div className="container grid items-center gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
           <div className="space-y-4">
             <Badge className="bg-accent text-accent-foreground">Featured Project</Badge>
@@ -107,7 +133,7 @@ export default function Home() {
         </div>
       </section>
       
-      <section id="ads" className="w-full py-12 md:py-24 lg:py-32 bg-background">
+      <section id="ads" className="w-full py-12 md:py-24 lg:py-32 bg-secondary">
         <div className="container px-4 md:px-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl font-headline">Client Advertisements</h2>
@@ -122,7 +148,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="careers-cta" className="w-full py-12 md:py-24 lg:py-32 bg-secondary">
+      <section id="careers-cta" className="w-full py-12 md:py-24 lg:py-32 bg-background">
         <div className="container px-4 md:px-6">
           <div className="grid gap-6 lg:grid-cols-3 lg:gap-12">
             <div className="space-y-2">
