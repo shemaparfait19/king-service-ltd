@@ -1,4 +1,5 @@
 
+
 import { NextResponse, type NextRequest } from 'next/server';
 import { i18n } from './i18n-config';
 
@@ -18,29 +19,16 @@ const handleI18nRouting = (request: NextRequest) => {
 }
 
 export function middleware(request: NextRequest) {
-  const sessionCookie = request.cookies.get('session');
   const pathname = request.nextUrl.pathname;
 
-  // If trying to access any admin page (except login) without a session, redirect to login
-  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
-    if (!sessionCookie) {
-      return NextResponse.redirect(new URL('/admin/login', request.url));
-    }
-  }
-
-  // If trying to access login page with a session, redirect to admin dashboard
-  if (pathname.startsWith('/admin/login')) {
-    if (sessionCookie) {
-      return NextResponse.redirect(new URL('/admin', request.url));
-    }
-  }
-  
   // Handle i18n routing for non-admin, non-api routes
   const isApiRoute = pathname.startsWith('/api');
   const isNextInternal = pathname.startsWith('/_next');
-  const isAsset = pathname.includes('.'); // a simplified check for assets like .ico, .png, etc.
+  const isAsset = pathname.includes('.');
   const isAdminRoute = pathname.startsWith('/admin');
 
+  // Let the client-side handle auth redirection.
+  // The middleware just handles i18n for public pages.
   if (!isApiRoute && !isNextInternal && !isAsset && !isAdminRoute) {
     return handleI18nRouting(request);
   }

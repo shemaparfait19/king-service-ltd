@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import Link from 'next/link';
@@ -21,8 +22,8 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { AuthProvider, useAuth } from '@/hooks/use-auth';
-import { useRouter } from 'next/navigation';
+import { AuthProvider, useAuth, ProtectedRoute } from '@/hooks/use-auth';
+import { useRouter, usePathname } from 'next/navigation';
 
 const sidebarNavItems = [
   { href: '/admin', icon: Home, label: 'Dashboard' },
@@ -90,20 +91,33 @@ function AdminSidebar() {
   );
 }
 
+function AdminPagesLayout({ children }: { children: React.ReactNode }) {
+    return (
+        <ProtectedRoute>
+            <div className="flex min-h-screen w-full">
+                <AdminSidebar />
+                <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 flex-grow">
+                    {children}
+                </div>
+            </div>
+        </ProtectedRoute>
+    );
+}
 
 export default function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
+  
   return (
     <AuthProvider>
-      <div className="flex min-h-screen w-full">
-        <AdminSidebar />
-        <div className="flex flex-col sm:gap-4 sm:py-4 sm:pl-14 flex-grow">
-          {children}
-        </div>
-      </div>
+      {pathname === '/admin/login' ? (
+        children
+      ) : (
+        <AdminPagesLayout>{children}</AdminPagesLayout>
+      )}
     </AuthProvider>
   );
 }

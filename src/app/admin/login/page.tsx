@@ -1,7 +1,8 @@
 
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,8 +13,6 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Power, Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
-import { app } from '@/lib/firebase';
 import { useAuth } from '@/hooks/use-auth';
 
 const loginSchema = z.object({
@@ -23,9 +22,9 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export default function LoginPage() {
+function LoginPage() {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, user, loading } = useAuth();
   const [error, setError] = useState<string | null>(null);
   const {
     register,
@@ -34,6 +33,13 @@ export default function LoginPage() {
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
+
+  useEffect(() => {
+    if (!loading && user) {
+        router.replace('/admin');
+    }
+  }, [user, loading, router]);
+
 
   const onSubmit: SubmitHandler<LoginFormValues> = async (data) => {
     setError(null);
@@ -49,6 +55,17 @@ export default function LoginPage() {
       }
     }
   };
+
+  if (loading || user) {
+    return (
+        <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
+            <div className="flex items-center gap-2">
+                <Power className="h-8 w-8 text-primary animate-pulse" />
+                <span className="text-lg text-muted-foreground">Loading...</span>
+            </div>
+        </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-secondary">
@@ -90,4 +107,9 @@ export default function LoginPage() {
       </div>
     </div>
   );
+}
+
+// We wrap the export in a default function to ensure the hooks work correctly
+export default function Page() {
+    return <LoginPage />;
 }

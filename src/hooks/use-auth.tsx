@@ -6,6 +6,7 @@ import { getAuth, onAuthStateChanged, User, signInWithEmailAndPassword, signOut 
 import { app } from '@/lib/firebase';
 import nookies from 'nookies';
 import { useRouter } from 'next/navigation';
+import { Power } from 'lucide-react';
 
 interface AuthContextType {
   user: User | null;
@@ -24,7 +25,6 @@ const AuthContext = createContext<AuthContextType>({
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
   const auth = getAuth(app);
 
   useEffect(() => {
@@ -60,22 +60,27 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
 export const useAuth = () => useContext(AuthContext);
 
-// Wrapper for login page to prevent rendering it if already logged in
-export function WithoutAuth(Component: React.ComponentType) {
-    return function WrappedComponent(props: any) {
-        const { user, loading } = useAuth();
-        const router = useRouter();
+// A component to protect routes that require authentication
+export function ProtectedRoute({ children }: { children: ReactNode }) {
+    const { user, loading } = useAuth();
+    const router = useRouter();
 
-        useEffect(() => {
-            if (!loading && user) {
-                router.replace('/admin');
-            }
-        }, [user, loading, router]);
-        
-        if (loading || user) {
-             return null; // Or a loading spinner
+    useEffect(() => {
+        if (!loading && !user) {
+            router.replace('/admin/login');
         }
-
-        return <Component {...props} />;
+    }, [user, loading, router]);
+    
+    if (loading || !user) {
+        return (
+            <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
+                <div className="flex items-center gap-2">
+                    <Power className="h-8 w-8 text-primary animate-pulse" />
+                    <span className="text-lg text-muted-foreground">Loading Admin...</span>
+                </div>
+            </div>
+        );
     }
+
+    return <>{children}</>;
 }
