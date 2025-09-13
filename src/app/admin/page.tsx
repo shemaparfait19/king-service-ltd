@@ -23,40 +23,60 @@ import type { BlogPost, PortfolioProject } from "@/lib/definitions";
 
 const adminFeatures = [
   {
-    title: "Manage Services",
-    description: "Add, edit, or remove service listings.",
+    title: "Hero Images",
+    description: "Manage homepage slider images",
+    icon: ImageIcon,
+    href: "/admin/hero-images",
+    color: "bg-blue-500",
+  },
+  {
+    title: "Services",
+    description: "Manage technical services with images",
     icon: Wrench,
     href: "/admin/services",
+    color: "bg-green-500",
   },
   {
-    title: "Manage Announcements",
-    description: "Create and publish news and announcements.",
-    icon: Newspaper,
-    href: "/admin/announcements",
-  },
-  {
-    title: "Manage Portfolio",
-    description: "Add, edit, or remove portfolio projects.",
+    title: "Portfolio",
+    description: "Showcase completed projects",
     icon: FolderKanban,
     href: "/admin/portfolio",
+    color: "bg-purple-500",
   },
   {
-    title: "Picture Library",
-    description: "Upload and manage site images.",
-    icon: ImageIcon,
-    href: "/admin/images",
+    title: "Announcements",
+    description: "Create news and announcements",
+    icon: Newspaper,
+    href: "/admin/announcements",
+    color: "bg-orange-500",
   },
   {
-    title: "Manage Bookings",
-    description: "View and update client service bookings.",
-    icon: CalendarCheck,
-    href: "#",
+    title: "Blog Posts",
+    description: "Write and manage blog content",
+    icon: FileText,
+    href: "/admin/blog",
+    color: "bg-indigo-500",
   },
   {
-    title: "Language Content",
-    description: "Edit content for English and French.",
-    icon: Languages,
-    href: "#",
+    title: "Contact Messages",
+    description: "View customer inquiries",
+    icon: Mail,
+    href: "/admin/contact",
+    color: "bg-red-500",
+  },
+  {
+    title: "Analytics",
+    description: "Website performance metrics",
+    icon: BarChart3,
+    href: "/admin/analytics",
+    color: "bg-teal-500",
+  },
+  {
+    title: "Settings",
+    description: "System configuration",
+    icon: Settings,
+    href: "/admin/settings",
+    color: "bg-gray-500",
   },
 ];
 
@@ -262,9 +282,13 @@ export default async function AdminDashboardPage() {
                   <Link
                     href={feature.href}
                     key={feature.title}
-                    className="flex items-center p-2 rounded-md hover:bg-muted"
+                    className="flex items-center p-3 rounded-lg hover:bg-muted transition-colors group"
                   >
-                    <feature.icon className="h-6 w-6 mr-4 text-muted-foreground" />
+                    <div
+                      className={`p-2 rounded-lg ${feature.color} mr-4 group-hover:scale-110 transition-transform`}
+                    >
+                      <feature.icon className="h-5 w-5 text-white" />
+                    </div>
                     <div>
                       <p className="font-semibold">{feature.title}</p>
                       <p className="text-sm text-muted-foreground">
