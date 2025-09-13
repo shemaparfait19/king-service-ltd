@@ -43,9 +43,6 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  devIndicators: {
-    buildActivity: false,
-  },
   experimental: {
     // This is the correct way to configure allowed origins for development.
     // Using a wildcard for cloudworkstations.dev allows any assigned URL to work.

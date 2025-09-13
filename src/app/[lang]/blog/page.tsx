@@ -1,27 +1,30 @@
 import Link from "next/link";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { collection, getDocs, query, orderBy, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import type { BlogPost } from "@/lib/definitions";
 
 async function getBlogPosts(): Promise<BlogPost[]> {
   try {
     const blogPostsRef = collection(db, "blogPosts");
-    const q = query(
-      blogPostsRef,
-      where("status", "==", "Published"),
-      orderBy("date", "desc")
-    );
+    const q = query(blogPostsRef, where("status", "==", "Published"));
     const blogPostsSnapshot = await getDocs(q);
 
-    return blogPostsSnapshot.docs.map(
+    const posts = blogPostsSnapshot.docs.map(
       (doc) =>
         ({
           id: doc.id,
           ...doc.data(),
         } as BlogPost)
     );
+
+    // Sort by date on the client side to avoid requiring a composite index
+    return posts.sort((a, b) => {
+      const dateA = new Date(a.date?.toDate?.() || a.date);
+      const dateB = new Date(b.date?.toDate?.() || b.date);
+      return dateB.getTime() - dateA.getTime();
+    });
   } catch (error) {
     console.error("Error fetching blog posts:", error);
     return [];
