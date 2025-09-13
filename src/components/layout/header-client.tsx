@@ -116,8 +116,9 @@ export function HeaderClient({
                     <Image
                       src="/logo.png"
                       alt="KSTech Logo"
-                      width={28}
-                      height={28}
+                      width={40}
+                      height={40}
+                      className="h-10 w-auto"
                     />
                   </Link>
                 </SheetTitle>

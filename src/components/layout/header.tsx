@@ -22,7 +22,13 @@ export default async function SiteHeader() {
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
         <Link href={`/${lang}`} className="mr-6 flex items-center">
-          <Image src="/logo.png" alt="KSTech Logo" width={32} height={32} />
+          <Image
+            src="/logo.png"
+            alt="KSTech Logo"
+            width={48}
+            height={48}
+            className="h-12 w-auto"
+          />
         </Link>
 
         <HeaderClient services={services} />

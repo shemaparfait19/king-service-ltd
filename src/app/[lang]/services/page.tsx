@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { serviceIcons } from "@/lib/data";
 import Image from "next/image";
+import { SafeImage } from "@/components/ui/safe-image";
 import type { Service } from "@/lib/definitions";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -25,6 +26,8 @@ async function getServices(): Promise<Service[]> {
       icon: serviceIcons[data.slug as keyof typeof serviceIcons] || Wrench,
     } as Service;
   });
+
+  console.log("Fetched services:", servicesList);
   return servicesList;
 }
 
@@ -60,12 +63,13 @@ export default async function ServicesPage({
                 <CardHeader className="p-0 border-b">
                   <div className="overflow-hidden aspect-[4/3] relative">
                     {service.imageUrl ? (
-                      <Image
+                      <SafeImage
                         src={service.imageUrl}
                         alt={service.title}
                         fill
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         className="object-cover group-hover:scale-105 transition-transform duration-300"
+                        fallbackIcon={service.icon}
                       />
                     ) : (
                       <div className="bg-muted flex items-center justify-center h-full">

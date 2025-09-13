@@ -4,6 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Autoplay from "embla-carousel-autoplay";
+import { SafeImage } from "@/components/ui/safe-image";
 
 import {
   Carousel,
@@ -46,6 +47,7 @@ export default function HeroSlider() {
             } as HeroImage)
         );
 
+        console.log("Fetched hero images:", images);
         setHeroImages(images);
       } catch (error) {
         console.error("Error fetching hero images:", error);
@@ -94,7 +96,7 @@ export default function HeroSlider() {
                 key={image.id}
                 className="pl-0 relative w-full h-full"
               >
-                <Image
+                <SafeImage
                   src={image.imageUrl}
                   alt={image.description}
                   fill
