@@ -1,11 +1,15 @@
 
-
 import { NextResponse, type NextRequest } from 'next/server';
 import { i18n } from './i18n-config';
 
 const handleI18nRouting = (request: NextRequest) => {
   const pathname = request.nextUrl.pathname;
   
+  // Do not apply i18n routing for admin pages
+  if (pathname.startsWith('/admin')) {
+    return NextResponse.next();
+  }
+
   const pathnameIsMissingLocale = i18n.locales.every(
     (locale) => !pathname.startsWith(`/${locale}/`) && pathname !== `/${locale}`
   );
@@ -16,23 +20,33 @@ const handleI18nRouting = (request: NextRequest) => {
       new URL(`/${locale}${pathname.startsWith('/') ? '' : '/'}${pathname}`, request.url)
     );
   }
+
+  return NextResponse.next();
 }
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  const res = NextResponse.next();
+  res.headers.set('x-next-url', pathname);
+
   // Check if the request is for a static file in the public folder
-  // and not a page route.
   if (
     pathname.startsWith('/_next') || // Ignore Next.js internals
     pathname.startsWith('/api') || // Ignore API routes
     /\.(.*)$/.test(pathname) // Ignore static files (e.g., .png, .ico)
   ) {
-    return NextResponse.next();
+    return res;
   }
   
   // Apply i18n routing to all other paths
-  return handleI18nRouting(request);
+  const i18nResponse = handleI18nRouting(request);
+  if (i18nResponse) {
+    i18nResponse.headers.set('x-next-url', pathname);
+    return i18nResponse;
+  }
+
+  return res;
 }
 
 export const config = {
@@ -43,8 +57,6 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     *
-     * This has been simplified to allow the middleware to handle public files correctly.
      */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],

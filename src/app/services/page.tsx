@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { ArrowRight, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +8,7 @@ import Image from "next/image";
 import type { Service } from "@/lib/definitions";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { Locale } from "@/i18n-config";
 
 async function getServices(): Promise<Service[]> {
     const servicesCollection = collection(db, 'services');
@@ -27,7 +29,7 @@ async function getServices(): Promise<Service[]> {
     return servicesList;
 }
 
-export default async function ServicesPage() {
+export default async function ServicesPage({ params: { lang } }: { params: { lang: Locale } }) {
   const services = await getServices();
 
   return (
@@ -42,7 +44,7 @@ export default async function ServicesPage() {
              <div className="mx-auto grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {services.map((service) => (
                     <Card key={service.id} className="flex flex-col overflow-hidden group hover:shadow-lg transition-shadow duration-300">
-                        <Link href={`/services/${service.slug}`} className="flex flex-col h-full">
+                        <Link href={`/${lang}/services/${service.slug}`} className="flex flex-col h-full">
                             <CardHeader className="p-0 border-b">
                                 <div className="overflow-hidden aspect-[4/3] relative">
                                     {service.imageUrl ? (

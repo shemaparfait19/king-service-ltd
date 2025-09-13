@@ -1,3 +1,4 @@
+
 "use client"
 
 import Link from "next/link"
@@ -16,6 +17,7 @@ import { SearchDialog } from "@/components/search-dialog"
 import { LanguageSwitcher } from "../language-switcher"
 import type { Service } from "@/lib/definitions"
 import Image from "next/image"
+import { usePathname } from "next/navigation"
 
 const navLinks = [
   { href: "/services", label: "Services", dropdown: true },
@@ -27,6 +29,9 @@ const navLinks = [
 ]
 
 export function HeaderClient({ services }: { services: Omit<Service, 'icon' | 'id'>[] }) {
+  const pathname = usePathname();
+  const lang = pathname.split('/')[1];
+
   return (
     <>
       {/* Desktop Navigation */}
@@ -40,17 +45,17 @@ export function HeaderClient({ services }: { services: Omit<Service, 'icon' | 'i
               <DropdownMenuContent>
                 {services.map(service => (
                   <DropdownMenuItem key={service.slug} asChild>
-                    <Link href={`/services/${service.slug}`}>{service.title}</Link>
+                    <Link href={`/${lang}${link.href}/${service.slug}`}>{service.title}</Link>
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
-                  <Link href="/services">View All Services</Link>
+                  <Link href={`/${lang}/services`}>View All Services</Link>
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link key={link.href} href={link.href} className="hover:text-primary transition-colors">
+            <Link key={link.href} href={`/${lang}${link.href}`} className="hover:text-primary transition-colors">
               {link.label}
             </Link>
           )
@@ -65,7 +70,7 @@ export function HeaderClient({ services }: { services: Omit<Service, 'icon' | 'i
         <SearchDialog />
         <ThemeToggle />
         <LanguageSwitcher />
-        <Link href="/contact" className="hidden lg:inline-flex">
+        <Link href={`/${lang}/contact`} className="hidden lg:inline-flex">
           <Button className="bg-accent text-accent-foreground hover:bg-accent/90">Book Now</Button>
         </Link>
 
@@ -81,7 +86,7 @@ export function HeaderClient({ services }: { services: Omit<Service, 'icon' | 'i
             <SheetContent side="left">
               <SheetHeader>
                 <SheetTitle>
-                  <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
+                  <Link href={`/${lang}`} className="flex items-center gap-2 text-lg font-semibold">
                     <Image src="/logo.png" alt="KSTech Logo" width={28} height={28} />
                     <span className="font-bold font-headline">KSTech Solutions</span>
                   </Link>
@@ -92,11 +97,11 @@ export function HeaderClient({ services }: { services: Omit<Service, 'icon' | 'i
               </SheetHeader>
               <nav className="grid gap-6 text-lg font-medium mt-8">
                 {navLinks.map(link => (
-                    <Link key={link.href} href={link.href} className="text-muted-foreground hover:text-primary transition-colors">
+                    <Link key={link.href} href={`/${lang}${link.href}`} className="text-muted-foreground hover:text-primary transition-colors">
                         {link.label}
                     </Link>
                 ))}
-                <Link href="/contact" className="mt-4">
+                <Link href={`/${lang}/contact`} className="mt-4">
                   <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">Book Now</Button>
                 </Link>
               </nav>

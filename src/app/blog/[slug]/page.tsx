@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
@@ -16,13 +17,19 @@ import Link from 'next/link';
 import { collection, getDocs, query, where, limit } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { BlogPost } from '@/lib/definitions';
+import { i18n } from '@/i18n-config';
 
 
 export async function generateStaticParams() {
     const postsSnapshot = await getDocs(collection(db, 'blogPosts'));
-    return postsSnapshot.docs.map((doc) => ({
-      slug: doc.data().slug,
-    }));
+    
+    const params = i18n.locales.flatMap(locale => 
+        postsSnapshot.docs.map((doc) => ({
+            slug: doc.data().slug,
+            lang: locale,
+        }))
+    );
+    return params;
 }
 
 async function getPost(slug: string): Promise<BlogPost | null> {
@@ -43,7 +50,7 @@ async function getPost(slug: string): Promise<BlogPost | null> {
     } as BlogPost;
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+export default async function BlogPostPage({ params }: { params: { slug: string, lang: string } }) {
   const post = await getPost(params.slug);
 
   if (!post) {
@@ -58,13 +65,13 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
             <BreadcrumbList>
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="/">Home</Link>
+                  <Link href={`/${params.lang}`}>Home</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
                 <BreadcrumbLink asChild>
-                  <Link href="/blog">Blog</Link>
+                  <Link href={`/${params.lang}/blog`}>Blog</Link>
                 </BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
@@ -98,14 +105,14 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
 
               <div
                 className="prose dark:prose-invert prose-lg max-w-none"
-                dangerouslySetInnerHTML={{ __html: post.content }}
+                dangerouslySetInnerHTML={{ __html: post.content.replace(/\n/g, '<br />') }}
               />
 
             </article>
           </main>
 
           <footer className="mt-12">
-            <Link href="/blog">
+            <Link href={`/${params.lang}/blog`}>
                 <span className="inline-flex items-center text-accent hover:underline">
                     <ArrowLeft className="mr-2 h-4 w-4" />
                     Back to Blog

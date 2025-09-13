@@ -1,3 +1,4 @@
+
 import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
@@ -6,6 +7,7 @@ import { format } from 'date-fns';
 import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { BlogPost } from '@/lib/definitions';
+import type { Locale } from '@/i18n-config';
 
 async function getBlogPosts(): Promise<BlogPost[]> {
     const postsCollection = collection(db, 'blogPosts');
@@ -22,7 +24,7 @@ async function getBlogPosts(): Promise<BlogPost[]> {
     return postList;
 }
 
-export default async function BlogPage() {
+export default async function BlogPage({ params: { lang } }: { params: { lang: Locale } }) {
   const blogPosts = await getBlogPosts();
 
   return (
@@ -40,7 +42,7 @@ export default async function BlogPage() {
             <Card key={post.id} className="flex flex-col">
               {post.imageUrl && (
                 <CardHeader className="p-0">
-                  <Link href={`/blog/${post.slug}`}>
+                  <Link href={`/${lang}/blog/${post.slug}`}>
                     <Image
                       src={post.imageUrl}
                       alt={post.title}
@@ -53,7 +55,7 @@ export default async function BlogPage() {
               )}
               <CardContent className="pt-6 flex-grow">
                 <CardTitle className="text-xl font-headline hover:text-primary transition-colors">
-                  <Link href={`/blog/${post.slug}`}>{post.title}</Link>
+                  <Link href={`/${lang}/blog/${post.slug}`}>{post.title}</Link>
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-2">
                   {format(new Date(post.date), 'MMMM d, yyyy')} by {post.author}
@@ -61,7 +63,7 @@ export default async function BlogPage() {
                 <p className="mt-4 text-muted-foreground">{post.excerpt}</p>
               </CardContent>
               <CardFooter>
-                 <Link href={`/blog/${post.slug}`}>
+                 <Link href={`/${lang}/blog/${post.slug}`}>
                     <Button variant="link" className="p-0 text-accent">Read More</Button>
                  </Link>
               </CardFooter>
