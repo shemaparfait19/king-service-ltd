@@ -30,6 +30,7 @@ async function getServices(): Promise<Service[]> {
       short_desc: data.short_desc,
       long_desc: data.long_desc,
       details: data.details,
+      imageUrl: data.imageUrl,
       icon: serviceIcons[data.slug as keyof typeof serviceIcons] || Wrench,
     } as Service;
   });
@@ -58,19 +59,16 @@ export default async function Home() {
             </div>
           </div>
           <div className="mx-auto grid grid-cols-1 gap-8 py-12 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-             {services.map((service) => {
-                const serviceImage = PlaceHolderImages.find(p => p.id === `service-${service.slug}`)
-                return (
+             {services.map((service) => (
                 <Card key={service.id} className="flex flex-col overflow-hidden group hover:shadow-xl transition-shadow duration-300 bg-background">
                     <Link href={`/services/${service.slug}`} className="flex flex-col h-full">
                         <CardHeader className="p-0 border-b relative aspect-[4/3] overflow-hidden">
-                           {serviceImage ? (
+                           {service.imageUrl ? (
                                 <Image
-                                    src={serviceImage.imageUrl}
+                                    src={service.imageUrl}
                                     alt={service.title}
                                     fill
                                     className="object-cover group-hover:scale-105 transition-transform duration-300"
-                                    data-ai-hint={serviceImage.imageHint}
                                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                 />
                             ) : (
@@ -89,7 +87,7 @@ export default async function Home() {
                         </CardContent>
                     </Link>
                 </Card>
-            )})}
+            ))}
           </div>
           <div className="flex justify-center">
             <Link href="/services">

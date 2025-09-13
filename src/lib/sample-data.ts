@@ -15,6 +15,7 @@ export const sampleServices = [
         'Door seal and gasket replacement',
         'Available for residential and commercial units',
       ],
+      imageUrl: 'https://picsum.photos/seed/fridgerepair/600/400',
       icon: 'Refrigerator', // Placeholder, not stored in DB
     },
     {
@@ -29,6 +30,7 @@ export const sampleServices = [
         'Structured cabling for internet',
         'Wi-Fi access point configuration',
       ],
+      imageUrl: 'https://picsum.photos/seed/securitycam/600/400',
       icon: 'Camera',
     },
     {
@@ -43,6 +45,7 @@ export const sampleServices = [
         'Grid-tied and off-grid configurations',
         'System maintenance and troubleshooting',
       ],
+      imageUrl: 'https://picsum.photos/seed/solarpanel/600/400',
       icon: 'Sun',
     },
     {
@@ -57,6 +60,7 @@ export const sampleServices = [
         'Duct cleaning and inspection',
         'Thermostat installation and repair',
       ],
+      imageUrl: 'https://picsum.photos/seed/ac-repair/600/400',
       icon: 'AirVent',
     },
     {
@@ -71,6 +75,7 @@ export const sampleServices = [
         'Printed Circuit Board (PCB) diagnostics',
         'On-site and workshop repair options',
       ],
+      imageUrl: 'https://picsum.photos/seed/industrial/600/400',
       icon: 'Factory',
     },
     {
@@ -85,6 +90,7 @@ export const sampleServices = [
         'Electrical system inspection and testing',
         'Safety and compliance checks',
       ],
+      imageUrl: 'https://picsum.photos/seed/wiring/600/400',
       icon: 'Cable',
     },
     {
@@ -99,6 +105,7 @@ export const sampleServices = [
         'Training on modern diagnostic tools',
         'Certificate of completion',
       ],
+      imageUrl: 'https://picsum.photos/seed/training/600/400',
       icon: 'GraduationCap',
     },
     {
@@ -113,6 +120,7 @@ export const sampleServices = [
         'Social media graphics',
         'Product packaging design',
       ],
+      imageUrl: 'https://picsum.photos/seed/design/600/400',
       icon: 'PenTool',
     },
   ];

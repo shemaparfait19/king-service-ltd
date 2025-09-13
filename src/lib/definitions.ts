@@ -8,6 +8,7 @@ export type Service = {
     long_desc: string;
     details: string[];
     icon: LucideIcon;
+    imageUrl?: string;
 };
 
 export type FaqItem = {

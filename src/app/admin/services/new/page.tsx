@@ -10,7 +10,7 @@ import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
-import { Trash, PlusCircle, Upload } from 'lucide-react';
+import { Trash, PlusCircle } from 'lucide-react';
 import { useTransition } from 'react';
 import { addDoc, collection } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -20,6 +20,7 @@ const serviceSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
   short_desc: z.string().min(10, 'Short description must be at least 10 characters'),
   long_desc: z.string().min(20, 'Long description must be at least 20 characters'),
+  imageUrl: z.string().url('Must be a valid image URL').optional().or(z.literal('')),
   details: z.array(z.object({ value: z.string().min(1, 'Detail cannot be empty')})).min(1, 'At least one detail is required'),
 });
 
@@ -40,6 +41,7 @@ export default function NewServicePage() {
       title: '',
       short_desc: '',
       long_desc: '',
+      imageUrl: '',
       details: [{ value: '' }],
     },
   });
@@ -98,6 +100,13 @@ export default function NewServicePage() {
                   {errors.long_desc && <p className="text-destructive text-sm">{errors.long_desc.message}</p>}
                 </div>
                 
+                 <div className="grid gap-2">
+                  <Label htmlFor="imageUrl">Image URL</Label>
+                  <Input id="imageUrl" {...register('imageUrl')} placeholder="https://..."/>
+                  {errors.imageUrl && <p className="text-destructive text-sm">{errors.imageUrl.message}</p>}
+                   <p className="text-xs text-muted-foreground">e.g., https://picsum.photos/seed/my-service/600/400</p>
+                </div>
+
                 <div className="grid gap-2">
                     <Label>Service Details / "What's Included"</Label>
                     <div className="grid gap-3">
@@ -115,25 +124,6 @@ export default function NewServicePage() {
                         Add Detail
                     </Button>
                     {errors.details && <p className="text-destructive text-sm">At least one detail is required.</p>}
-                </div>
-
-                <div className="grid gap-2">
-                    <Label htmlFor="images">Service Images</Label>
-                    <div className="flex items-center justify-center w-full">
-                        <Label
-                            htmlFor="image-upload"
-                            className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-lg cursor-pointer bg-background hover:bg-muted"
-                        >
-                            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                                <Upload className="w-8 h-8 mb-4 text-muted-foreground" />
-                                <p className="mb-2 text-sm text-muted-foreground">
-                                    <span className="font-semibold">Click to upload</span> or drag and drop
-                                </p>
-                                <p className="text-xs text-muted-foreground">PNG, JPG, or WEBP (multiple images allowed)</p>
-                            </div>
-                            <Input id="image-upload" type="file" multiple className="hidden" />
-                        </Label>
-                    </div> 
                 </div>
 
                 <div className="flex justify-end gap-4 mt-4">

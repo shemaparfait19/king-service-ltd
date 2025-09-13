@@ -10,10 +10,9 @@ import { useForm, SubmitHandler, useFieldArray } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
-import { Trash, PlusCircle, Upload } from 'lucide-react';
+import { Trash, PlusCircle } from 'lucide-react';
 import Image from 'next/image';
 import { type Service } from '@/lib/definitions';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useTransition } from 'react';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
@@ -23,6 +22,7 @@ const serviceSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
   short_desc: z.string().min(10, 'Short description must be at least 10 characters'),
   long_desc: z.string().min(20, 'Long description must be at least 20 characters'),
+  imageUrl: z.string().url('Must be a valid image URL').optional().or(z.literal('')),
   details: z.array(z.object({ value: z.string().min(1, 'Detail cannot be empty')})).min(1, 'At least one detail is required'),
 });
 
@@ -33,19 +33,19 @@ export function EditServiceForm({ service }: { service: Service }) {
   const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
-  const gallery = PlaceHolderImages.filter(p => p.id.startsWith(`service-${service.slug}`));
-
   const {
     register,
     handleSubmit,
     control,
     formState: { errors },
+    watch
   } = useForm<ServiceFormValues>({
     resolver: zodResolver(serviceSchema),
     defaultValues: {
         title: service.title,
         short_desc: service.short_desc,
         long_desc: service.long_desc,
+        imageUrl: service.imageUrl || '',
         details: service.details.map(d => ({ value: d }))
     },
   });
@@ -54,6 +54,8 @@ export function EditServiceForm({ service }: { service: Service }) {
     control,
     name: "details"
   });
+
+  const currentImageUrl = watch('imageUrl');
 
   const onSubmit: SubmitHandler<ServiceFormValues> = (data) => {
     startTransition(async () => {
@@ -96,6 +98,15 @@ export function EditServiceForm({ service }: { service: Service }) {
             {errors.long_desc && <p className="text-destructive text-sm">{errors.long_desc.message}</p>}
           </div>
 
+          <div className="grid gap-4">
+              <Label htmlFor="imageUrl">Image URL</Label>
+              <Input id="imageUrl" {...register('imageUrl')} placeholder="https://..."/>
+              {errors.imageUrl && <p className="text-destructive text-sm">{errors.imageUrl.message}</p>}
+              {currentImageUrl && (
+                  <Image src={currentImageUrl} alt={service.title} width={200} height={150} className="rounded-md object-cover" />
+              )}
+          </div>
+
           <div className="grid gap-2">
               <Label>Service Details / "What's Included"</Label>
               <div className="grid gap-3">
@@ -114,39 +125,7 @@ export function EditServiceForm({ service }: { service: Service }) {
               </Button>
               {errors.details && <p className="text-destructive text-sm">At least one detail is required.</p>}
           </div>
-
-          <div className="grid gap-4">
-              <Label>Current Images</Label>
-              <div className="flex flex-wrap gap-4">
-                  {gallery.length > 0 ? gallery.map(image => (
-                      <div key={image.id} className="relative">
-                          <Image src={image.imageUrl} alt={image.imageHint} width={150} height={100} className="rounded-md object-cover" />
-                          <Button variant="destructive" size="icon" className="absolute -top-2 -right-2 h-6 w-6">
-                              <Trash className="h-3 w-3" />
-                          </Button>
-                      </div>
-                  )) : <p className="text-sm text-muted-foreground">No images uploaded for this service.</p>}
-              </div>
-          </div>
-
-          <div className="grid gap-2">
-              <Label htmlFor="images">Upload New Images</Label>
-               <div className="flex items-center justify-center w-full">
-                  <Label
-                      htmlFor="image-upload"
-                      className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-lg cursor-pointer bg-background hover:bg-muted"
-                  >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                          <Upload className="w-8 h-8 mb-2 text-muted-foreground" />
-                          <p className="text-sm text-muted-foreground">
-                              <span className="font-semibold">Click or drag</span> to upload
-                          </p>
-                      </div>
-                      <Input id="image-upload" type="file" multiple className="hidden" />
-                  </Label>
-              </div> 
-          </div>
-
+          
           <div className="flex justify-end gap-4 mt-4">
             <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
             <Button type="submit" disabled={isPending}>{isPending ? "Saving..." : "Save Changes"}</Button>
