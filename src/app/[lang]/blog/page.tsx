@@ -8,11 +8,7 @@ import type { BlogPost } from "@/lib/definitions";
 async function getBlogPosts(): Promise<BlogPost[]> {
   try {
     const blogPostsRef = collection(db, "blogPosts");
-    const q = query(
-      blogPostsRef,
-      where("status", "==", "Published"),
-      where("category", "!=", "Announcement")
-    );
+    const q = query(blogPostsRef, where("status", "==", "Published"));
     const blogPostsSnapshot = await getDocs(q);
 
     const posts = blogPostsSnapshot.docs.map(
@@ -23,12 +19,14 @@ async function getBlogPosts(): Promise<BlogPost[]> {
         } as BlogPost)
     );
 
-    // Sort by date on the client side to avoid requiring a composite index
-    return posts.sort((a, b) => {
-      const dateA = new Date(a.date?.toDate?.() || a.date);
-      const dateB = new Date(b.date?.toDate?.() || b.date);
-      return dateB.getTime() - dateA.getTime();
-    });
+    // Filter out announcements and sort by date on the client side to avoid requiring a composite index
+    return posts
+      .filter((post) => post.category !== "Announcement")
+      .sort((a, b) => {
+        const dateA = new Date(a.date?.toDate?.() || a.date);
+        const dateB = new Date(b.date?.toDate?.() || b.date);
+        return dateB.getTime() - dateA.getTime();
+      });
   } catch (error) {
     console.error("Error fetching blog posts:", error);
     return [];

@@ -22,7 +22,6 @@ export default function AnnouncementsBanner() {
         const announcementsRef = collection(db, "blogPosts");
         const q = query(
           announcementsRef,
-          where("status", "==", "Published"),
           where("category", "==", "Announcement")
         );
         const announcementsSnapshot = await getDocs(q);
@@ -35,8 +34,9 @@ export default function AnnouncementsBanner() {
             } as Announcement)
         );
 
-        // Sort by date and get only the latest 3
+        // Filter by published status, sort by date and get only the latest 3
         const sortedPosts = posts
+          .filter((post) => post.status === "Published")
           .sort((a, b) => {
             const dateA = new Date(a.date?.toDate?.() || a.date);
             const dateB = new Date(b.date?.toDate?.() || b.date);

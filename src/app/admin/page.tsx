@@ -91,15 +91,19 @@ async function getDashboardData() {
 
   const recentPostsSnapshot = await getDocs(collection(db, "blogPosts"));
   const recentPosts = recentPostsSnapshot.docs
-    .map(
-      (doc) =>
-        ({
-          id: doc.id,
-          ...doc.data(),
-          date: doc.data().date.toDate(),
-        } as BlogPost)
-    )
-    .sort((a, b) => b.date.getTime() - a.date.getTime())
+    .map((doc) => {
+      const data = doc.data();
+      return {
+        id: doc.id,
+        ...data,
+        date: data.date?.toDate?.() || data.date || new Date(),
+      } as BlogPost;
+    })
+    .sort((a, b) => {
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      return dateB.getTime() - dateA.getTime();
+    })
     .slice(0, 3);
 
   const recentProjectsQuery = query(

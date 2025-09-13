@@ -108,10 +108,8 @@ export default function HeroSlider() {
             <CarouselItem className="pl-0 relative w-full h-full">
               <div className="w-full h-full bg-gradient-to-br from-accent/20 to-accent/40 flex items-center justify-center">
                 <div className="text-center text-muted-foreground">
-                  <p className="text-lg">No hero images available</p>
-                  <p className="text-sm">
-                    Please add images from the admin panel
-                  </p>
+                  <p className="text-lg">+</p>
+                  <p className="text-sm">+</p>
                 </div>
               </div>
             </CarouselItem>
