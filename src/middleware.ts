@@ -19,21 +19,20 @@ const handleI18nRouting = (request: NextRequest) => {
 }
 
 export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
+  const { pathname } = request.nextUrl;
 
-  // Handle i18n routing for non-admin, non-api routes
-  const isApiRoute = pathname.startsWith('/api');
-  const isNextInternal = pathname.startsWith('/_next');
-  const isAsset = pathname.includes('.');
-  const isAdminRoute = pathname.startsWith('/admin');
-
-  // Let the client-side handle auth redirection.
-  // The middleware just handles i18n for public pages.
-  if (!isApiRoute && !isNextInternal && !isAsset && !isAdminRoute) {
-    return handleI18nRouting(request);
+  // Check if the request is for a static file in the public folder
+  // and not a page route.
+  if (
+    pathname.startsWith('/_next') || // Ignore Next.js internals
+    pathname.startsWith('/api') || // Ignore API routes
+    /\.(.*)$/.test(pathname) // Ignore static files (e.g., .png, .ico)
+  ) {
+    return NextResponse.next();
   }
-
-  return NextResponse.next();
+  
+  // Apply i18n routing to all other paths
+  return handleI18nRouting(request);
 }
 
 export const config = {
@@ -44,7 +43,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * Feel free to modify this pattern to include more paths.
+     *
+     * This has been simplified to allow the middleware to handle public files correctly.
      */
     '/((?!api|_next/static|_next/image|favicon.ico).*)',
   ],

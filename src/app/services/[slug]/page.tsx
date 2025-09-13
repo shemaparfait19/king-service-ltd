@@ -23,16 +23,22 @@ import { PlaceHolderImages } from "@/lib/placeholder-images";
 import type { Service } from "@/lib/definitions";
 import { collection, getDocs, query, where, limit } from "firebase/firestore";
 import { db } from "@/lib/firebase";
+import { i18n } from "@/i18n-config";
 
 type Props = {
-  params: { slug: string };
+  params: { slug: string, lang: string };
 };
 
 export async function generateStaticParams() {
   const servicesSnapshot = await getDocs(collection(db, 'services'));
-  return servicesSnapshot.docs.map((doc) => ({
-    slug: doc.data().slug,
-  }));
+  
+  const params = i18n.locales.flatMap(locale => 
+    servicesSnapshot.docs.map(doc => ({
+      slug: doc.data().slug,
+      lang: locale,
+    }))
+  );
+  return params;
 }
 
 async function getService(slug: string): Promise<Service | null> {
@@ -98,11 +104,11 @@ export default async function ServiceDetailPage({ params }: Props) {
           <Breadcrumb>
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/" className="text-gray-300 hover:text-white">Home</BreadcrumbLink>
+                <BreadcrumbLink href={`/${params.lang}`} className="text-gray-300 hover:text-white">Home</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
-                <BreadcrumbLink href="/services" className="text-gray-300 hover:text-white">Services</BreadcrumbLink>
+                <BreadcrumbLink href={`/${params.lang}/services`} className="text-gray-300 hover:text-white">Services</BreadcrumbLink>
               </BreadcrumbItem>
               <BreadcrumbSeparator />
               <BreadcrumbItem>
@@ -133,7 +139,7 @@ export default async function ServiceDetailPage({ params }: Props) {
                 <ul className="space-y-3">
                   {otherServices.map(s => (
                     <li key={s.id}>
-                      <Link href={`/services/${s.slug}`} className="flex justify-between items-center text-muted-foreground hover:text-primary group">
+                      <Link href={`/${params.lang}/services/${s.slug}`} className="flex justify-between items-center text-muted-foreground hover:text-primary group">
                         <span>{s.title}</span>
                         <ArrowRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                       </Link>
@@ -166,7 +172,7 @@ export default async function ServiceDetailPage({ params }: Props) {
             <div className="prose prose-lg dark:prose-invert max-w-none">
               <p className="lead text-xl text-muted-foreground">{service.long_desc}</p>
               
-              {service.imageUrl && 
+               {service.imageUrl && 
                 <div className="my-8">
                   <Image 
                     src={service.imageUrl}
