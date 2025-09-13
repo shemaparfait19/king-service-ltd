@@ -6,7 +6,7 @@ import { getAuth, onAuthStateChanged, User, signInWithEmailAndPassword, signOut 
 import { app } from '@/lib/firebase';
 import nookies from 'nookies';
 import { useRouter } from 'next/navigation';
-import { Power } from 'lucide-react';
+import Image from 'next/image';
 
 interface AuthContextType {
   user: User | null;
@@ -75,7 +75,7 @@ export function ProtectedRoute({ children }: { children: ReactNode }) {
         return (
             <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
                 <div className="flex items-center gap-2">
-                    <Power className="h-8 w-8 text-primary animate-pulse" />
+                    <Image src="/logo.png" alt="KSTech Logo" width={32} height={32} className="animate-pulse" />
                     <span className="text-lg text-muted-foreground">Loading Admin...</span>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Power } from "lucide-react";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 
@@ -30,7 +30,7 @@ const SplashScreen = ({ onFinished }: { onFinished: () => void }) => {
       )}
     >
       <div className="flex items-center gap-4">
-        <Power className="h-12 w-12 text-primary" />
+        <Image src="/logo.png" alt="KSTech Logo" width={48} height={48} />
         <div className="flex flex-col">
             <h1 className="text-4xl font-extrabold font-headline">KSTech Solutions</h1>
             <p className="text-lg text-muted-foreground italic">The King of Electronics</p>

@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, Phone, Power } from "lucide-react"
+import { Menu, Phone } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -15,6 +15,7 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { SearchDialog } from "@/components/search-dialog"
 import { LanguageSwitcher } from "../language-switcher"
 import type { Service } from "@/lib/definitions"
+import Image from "next/image"
 
 const navLinks = [
   { href: "/services", label: "Services", dropdown: true },
@@ -81,7 +82,7 @@ export function HeaderClient({ services }: { services: Omit<Service, 'icon' | 'i
               <SheetHeader>
                 <SheetTitle>
                   <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
-                    <Power className="h-6 w-6 text-primary" />
+                    <Image src="/logo.png" alt="KSTech Logo" width={28} height={28} />
                     <span className="font-bold font-headline">KSTech Solutions</span>
                   </Link>
                 </SheetTitle>

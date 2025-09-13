@@ -11,9 +11,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Power, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useAuth } from '@/hooks/use-auth';
+import Image from 'next/image';
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -60,7 +61,7 @@ function LoginPage() {
     return (
         <div className="flex h-screen w-full flex-col items-center justify-center bg-background">
             <div className="flex items-center gap-2">
-                <Power className="h-8 w-8 text-primary animate-pulse" />
+                <Image src="/logo.png" alt="KSTech Logo" width={32} height={32} className="animate-pulse" />
                 <span className="text-lg text-muted-foreground">Loading...</span>
             </div>
         </div>
@@ -71,7 +72,7 @@ function LoginPage() {
     <div className="flex min-h-screen items-center justify-center bg-secondary">
       <div className="w-full max-w-md p-4">
         <div className="flex justify-center items-center gap-2 mb-6">
-            <Power className="h-8 w-8 text-primary" />
+            <Image src="/logo.png" alt="KSTech Logo" width={36} height={36} />
             <h1 className="text-2xl font-bold font-headline">KSTech Admin</h1>
         </div>
         <Card>
