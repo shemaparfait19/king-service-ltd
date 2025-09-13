@@ -7,7 +7,7 @@ import Image from "next/image";
 import type { Service } from "@/lib/definitions";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { Locale } from "@/i18n-config";
+import type { Locale } from "@/i18n-config";
 
 async function getServices(): Promise<Service[]> {
   const servicesCollection = collection(db, "services");
@@ -28,7 +28,11 @@ async function getServices(): Promise<Service[]> {
   return servicesList;
 }
 
-export default async function ServicesPage() {
+export default async function ServicesPage({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}) {
   const services = await getServices();
 
   return (
@@ -50,7 +54,7 @@ export default async function ServicesPage() {
               className="flex flex-col overflow-hidden group hover:shadow-lg transition-shadow duration-300"
             >
               <Link
-                href={`/services/${service.slug}`}
+                href={`/${lang}/services/${service.slug}`}
                 className="flex flex-col h-full"
               >
                 <CardHeader className="p-0 border-b">
