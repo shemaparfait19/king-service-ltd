@@ -35,6 +35,7 @@ export function EditProjectForm({ project }: { project: PortfolioProject }) {
     register,
     handleSubmit,
     formState: { errors },
+    watch
   } = useForm<ProjectFormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues: {
@@ -44,6 +45,8 @@ export function EditProjectForm({ project }: { project: PortfolioProject }) {
         imageUrl: project.imageUrl || '',
     }
   });
+
+  const currentImageUrl = watch('imageUrl');
 
   const onSubmit: SubmitHandler<ProjectFormValues> = (data) => {
     startTransition(async () => {
@@ -82,14 +85,16 @@ export function EditProjectForm({ project }: { project: PortfolioProject }) {
             {errors.description && <p className="text-destructive text-sm">{errors.description.message}</p>}
           </div>
 
-          <div className="grid gap-4">
-              <Label>Current Image</Label>
-              {project.imageUrl && (
-                  <Image src={project.imageUrl} alt={project.title} width={200} height={150} className="rounded-md object-cover" />
-              )}
-              <Label htmlFor="imageUrl" className="text-sm font-normal">Image URL</Label>
+          <div className="grid gap-2">
+              <Label htmlFor="imageUrl">Image URL</Label>
                <Input id="imageUrl" {...register('imageUrl')} />
                {errors.imageUrl && <p className="text-destructive text-sm">{errors.imageUrl.message}</p>}
+               {currentImageUrl && (
+                <div className="mt-4">
+                    <p className="text-sm font-medium mb-2">Image Preview:</p>
+                    <Image src={currentImageUrl} alt="Image preview" width={200} height={150} className="rounded-md object-cover" />
+                </div>
+               )}
           </div>
 
           <div className="flex justify-end gap-4 mt-4">

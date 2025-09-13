@@ -10,9 +10,8 @@ type ImagePlaceholder = {
 let images: ImagePlaceholder[];
 
 try {
-  if (data && Array.isArray((data as any).placeholderImages)) {
-    // Correctly access the nested array
-    images = (data as any).placeholderImages;
+  if (data && Array.isArray(data.placeholderImages)) {
+    images = data.placeholderImages;
   } else {
     images = [];
     console.error("placeholder-images.json is not in the expected format or is empty.");
@@ -21,6 +20,5 @@ try {
   images = [];
   console.error("Failed to parse placeholder-images.json:", error);
 }
-
 
 export const PlaceHolderImages: ImagePlaceholder[] = images;

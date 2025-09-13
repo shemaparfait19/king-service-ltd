@@ -53,6 +53,7 @@ async function getService(slug: string): Promise<Service | null> {
         short_desc: data.short_desc,
         long_desc: data.long_desc,
         details: data.details,
+        imageUrl: data.imageUrl,
         icon: serviceIcons[data.slug as keyof typeof serviceIcons] || Wrench,
     } as Service;
 }
@@ -70,6 +71,7 @@ async function getOtherServices(slug: string): Promise<Service[]> {
             short_desc: data.short_desc,
             long_desc: data.long_desc,
             details: data.details,
+            imageUrl: data.imageUrl,
             icon: serviceIcons[data.slug as keyof typeof serviceIcons] || Wrench,
         } as Service;
     });
@@ -164,6 +166,18 @@ export default async function ServiceDetailPage({ params }: Props) {
             <div className="prose prose-lg dark:prose-invert max-w-none">
               <p className="lead text-xl text-muted-foreground">{service.long_desc}</p>
               
+              {service.imageUrl && 
+                <div className="my-8">
+                  <Image 
+                    src={service.imageUrl}
+                    alt={service.title}
+                    width={800}
+                    height={500}
+                    className="rounded-lg object-cover w-full"
+                  />
+                </div>
+              }
+
               <h2 className="font-headline mt-12">What's Included</h2>
               <ul className="grid grid-cols-1 md:grid-cols-2 gap-4 not-prose list-none p-0">
                 {service.details.map((detail) => (

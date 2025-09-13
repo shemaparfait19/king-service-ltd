@@ -103,7 +103,10 @@ export function EditServiceForm({ service }: { service: Service }) {
               <Input id="imageUrl" {...register('imageUrl')} placeholder="https://..."/>
               {errors.imageUrl && <p className="text-destructive text-sm">{errors.imageUrl.message}</p>}
               {currentImageUrl && (
-                  <Image src={currentImageUrl} alt={service.title} width={200} height={150} className="rounded-md object-cover" />
+                <div className="mt-4">
+                  <p className="text-sm font-medium mb-2">Image Preview:</p>
+                  <Image src={currentImageUrl} alt="Image Preview" width={200} height={150} className="rounded-md object-cover" />
+                </div>
               )}
           </div>
 
