@@ -43,11 +43,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  experimental: {
-    // This is the correct way to configure allowed origins for development.
-    // Using a wildcard for cloudworkstations.dev allows any assigned URL to work.
-    allowedDevOrigins: ["*.cloudworkstations.dev"],
-  },
+  // experimental: {
+  //   // This is the correct way to configure allowed origins for development.
+  //   // Using a wildcard for cloudworkstations.dev allows any assigned URL to work.
+  //   allowedDevOrigins: ["*.cloudworkstations.dev"],
+  // },
 };
 
 export default nextConfig;

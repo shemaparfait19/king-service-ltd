@@ -13,6 +13,10 @@ import {
   CalendarCheck,
   FolderKanban,
   ArrowRight,
+  FileText,
+  Mail,
+  BarChart3,
+  Settings,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
