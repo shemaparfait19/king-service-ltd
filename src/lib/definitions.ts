@@ -1,10 +1,11 @@
 import { type LucideIcon } from 'lucide-react';
+import { type Icon } from 'lucide-react';
 
 export type Service = {
   id: number;
   title: string;
   slug: string;
-  icon: LucideIcon;
+  icon: string; // Changed to string to store icon name
   short_desc: string;
   long_desc: string;
   details: string[];
@@ -14,6 +15,14 @@ export type Service = {
     imageUrl: string;
   }[];
 };
+
+// Helper to get Lucide icon component from string name
+export const getIcon = (name: string): LucideIcon => {
+    const icons = require('lucide-react');
+    const IconComponent = icons[name as keyof typeof icons] as LucideIcon;
+    return IconComponent || icons.Wrench; // Return a default icon if not found
+};
+
 
 export type FaqItem = {
     id: number;

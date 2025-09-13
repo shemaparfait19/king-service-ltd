@@ -2,10 +2,12 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { services } from "@/lib/data";
+import { services as servicesData } from "@/lib/data";
+import { getIcon } from "@/lib/definitions";
 import Image from "next/image";
 
 export default function ServicesPage() {
+  const services = servicesData.map(s => ({...s, icon: getIcon(s.icon)}));
   return (
     <div className="bg-background">
         <div className="container py-12 md:py-24">
@@ -26,6 +28,7 @@ export default function ServicesPage() {
                                             src={service.gallery[0].imageUrl}
                                             alt={service.title}
                                             fill
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                                             className="object-cover group-hover:scale-105 transition-transform duration-300"
                                             data-ai-hint={service.gallery[0].imageHint}
                                         />

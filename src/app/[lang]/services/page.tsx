@@ -2,9 +2,11 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { services } from "@/lib/data";
+import { services as servicesData } from "@/lib/data";
+import { getIcon } from "@/lib/definitions";
 
 export default function ServicesPage() {
+    const services = servicesData.map(s => ({...s, icon: getIcon(s.icon)}));
   return (
     <div className="bg-background">
         <div className="container py-12 md:py-24">

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CheckCircle, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
 
-import { services, faqs } from "@/lib/data";
+import { services as servicesData, faqs } from "@/lib/data";
+import { getIcon } from "@/lib/definitions";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -27,18 +28,21 @@ type Props = {
 };
 
 export async function generateStaticParams() {
-  return services.map((service) => ({
+  return servicesData.map((service) => ({
     slug: service.slug,
   }));
 }
 
 export default async function ServiceDetailPage({ params }: Props) {
-  const service = services.find((s) => s.slug === params.slug);
-  const otherServices = services.filter(s => s.slug !== params.slug).slice(0, 5);
+  const serviceData = servicesData.find((s) => s.slug === params.slug);
 
-  if (!service) {
+  if (!serviceData) {
     notFound();
   }
+  const service = {...serviceData, icon: getIcon(serviceData.icon)};
+
+  const otherServicesData = servicesData.filter(s => s.slug !== params.slug).slice(0, 5);
+  const otherServices = otherServicesData.map(s => ({...s, icon: getIcon(s.icon)}));
 
   return (
     <>

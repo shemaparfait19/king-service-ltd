@@ -1,12 +1,14 @@
-import { services } from '@/lib/data';
+import { services as servicesData } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { MoreHorizontal, PlusCircle } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
+import { getIcon } from '@/lib/definitions';
 
 export default function AdminServicesPage() {
+  const services = servicesData.map(s => ({...s, icon: getIcon(s.icon)}));
   return (
     <div className="bg-secondary/50 flex-grow">
       <div className="container py-12">

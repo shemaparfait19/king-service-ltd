@@ -10,15 +10,17 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import HeroSlider from '@/components/hero-slider';
-import { services } from '@/lib/data';
+import { services as servicesData } from '@/lib/data';
+import { getIcon } from '@/lib/definitions';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function Home() {
   const portfolioImage = PlaceHolderImages.find(p => p.id === 'portfolio-1');
+  const services = servicesData.map(s => ({...s, icon: getIcon(s.icon)}));
 
   return (
     <div className="flex flex-col min-h-[100dvh]">
-      <section className="relative w-full h-[80vh] md:h-[90vh]">
+      <section className="relative w-full h-[70vh] md:h-[90vh]">
         <HeroSlider />
       </section>
 

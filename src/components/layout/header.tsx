@@ -14,6 +14,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTr
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SearchDialog } from "@/components/search-dialog"
 import { services } from "@/lib/data"
+import { LanguageSwitcher } from "../language-switcher"
 
 const navLinks = [
   { href: "/services", label: "Services", dropdown: true },
@@ -68,6 +69,7 @@ export default function SiteHeader() {
           </div>
           <SearchDialog />
           <ThemeToggle />
+          <LanguageSwitcher />
            <Link href="/admin">
               <Button variant="ghost" size="icon" aria-label="Admin Panel">
                 <UserCog className="h-5 w-5" />
