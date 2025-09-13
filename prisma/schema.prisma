@@ -3,7 +3,7 @@
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "rhel-openssl-1.0.x"]
+  binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
@@ -39,13 +39,4 @@ model PortfolioProject {
   category    String
   description String  @db.Text
   imageUrl    String?
-}
-
-model ContactSubmission {
-    id        Int      @id @default(autoincrement())
-    name      String
-    email     String
-    phone     String?
-    message   String   @db.Text
-    createdAt DateTime @default(now())
 }
