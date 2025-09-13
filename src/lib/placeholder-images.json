@@ -1,22 +1,21 @@
-
 {
   "placeholderImages": [
     {
       "id": "hero-1",
       "description": "Technician working on a complex circuit board.",
-      "imageUrl": "https://picsum.photos/seed/circuit/1920/1080",
+      "imageUrl": "https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80",
       "imageHint": "technician circuit"
     },
     {
       "id": "hero-2",
       "description": "Clean industrial machinery control panel.",
-      "imageUrl": "https://picsum.photos/seed/panel/1920/1080",
+      "imageUrl": "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80",
       "imageHint": "industrial equipment"
     },
     {
       "id": "hero-3",
       "description": "Server room with networking equipment.",
-      "imageUrl": "https://picsum.photos/seed/servers/1920/1080",
+      "imageUrl": "https://images.unsplash.com/photo-1558494949-ef010cbdcc31?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1920&q=80",
       "imageHint": "server room"
     },
     {

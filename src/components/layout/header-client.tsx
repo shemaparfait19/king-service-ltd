@@ -1,23 +1,29 @@
+"use client";
 
-"use client"
-
-import Link from "next/link"
-import { Menu, Phone } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Link from "next/link";
+import { Menu, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
   DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu"
-import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTrigger } from "@/components/ui/sheet"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { SearchDialog } from "@/components/search-dialog"
-import { LanguageSwitcher } from "../language-switcher"
-import type { Service } from "@/lib/definitions"
-import Image from "next/image"
-import { usePathname } from "next/navigation"
+} from "@/components/ui/dropdown-menu";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+  SheetTrigger,
+} from "@/components/ui/sheet";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { SearchDialog } from "@/components/search-dialog";
+import { LanguageSwitcher } from "../language-switcher";
+import type { Service } from "@/lib/definitions";
+import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
   { href: "/services", label: "Services", dropdown: true },
@@ -26,26 +32,32 @@ const navLinks = [
   { href: "/blog", label: "Blog" },
   { href: "/careers", label: "Careers" },
   { href: "/contact", label: "Contact" },
-]
+];
 
-export function HeaderClient({ services }: { services: Omit<Service, 'icon' | 'id'>[] }) {
+export function HeaderClient({
+  services,
+}: {
+  services: Omit<Service, "icon" | "id">[];
+}) {
   const pathname = usePathname();
-  const lang = pathname.split('/')[1];
+  const lang = pathname.split("/")[1];
 
   return (
     <>
       {/* Desktop Navigation */}
       <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
-        {navLinks.map(link =>
+        {navLinks.map((link) =>
           link.dropdown ? (
             <DropdownMenu key={link.label}>
               <DropdownMenuTrigger className="flex items-center gap-1 hover:text-primary transition-colors outline-none">
                 {link.label}
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                {services.map(service => (
+                {services.map((service) => (
                   <DropdownMenuItem key={service.slug} asChild>
-                    <Link href={`/${lang}${link.href}/${service.slug}`}>{service.title}</Link>
+                    <Link href={`/${lang}${link.href}/${service.slug}`}>
+                      {service.title}
+                    </Link>
                   </DropdownMenuItem>
                 ))}
                 <DropdownMenuSeparator />
@@ -55,7 +67,11 @@ export function HeaderClient({ services }: { services: Omit<Service, 'icon' | 'i
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
-            <Link key={link.href} href={`/${lang}${link.href}`} className="hover:text-primary transition-colors">
+            <Link
+              key={link.href}
+              href={`/${lang}${link.href}`}
+              className="hover:text-primary transition-colors"
+            >
               {link.label}
             </Link>
           )
@@ -65,13 +81,20 @@ export function HeaderClient({ services }: { services: Omit<Service, 'icon' | 'i
       <div className="flex flex-1 items-center justify-end gap-2">
         <div className="hidden sm:flex items-center gap-2 border-r pr-4 mr-2">
           <Phone className="h-4 w-4 text-muted-foreground" />
-          <a href="tel:+250787649480" className="text-sm font-medium hover:text-primary transition-colors">+250 787 649 480</a>
+          <a
+            href="tel:+250787649480"
+            className="text-sm font-medium hover:text-primary transition-colors"
+          >
+            +250 787 649 480
+          </a>
         </div>
         <SearchDialog />
         <ThemeToggle />
         <LanguageSwitcher />
         <Link href={`/${lang}/contact`} className="hidden lg:inline-flex">
-          <Button className="bg-accent text-accent-foreground hover:bg-accent/90">Book Now</Button>
+          <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
+            Book Now
+          </Button>
         </Link>
 
         {/* Mobile Menu */}
@@ -86,30 +109,40 @@ export function HeaderClient({ services }: { services: Omit<Service, 'icon' | 'i
             <SheetContent side="left">
               <SheetHeader>
                 <SheetTitle>
-                  <Link href={`/${lang}`} className="flex items-center gap-2 text-lg font-semibold">
-                    <Image src="/logo.png" alt="KSTech Logo" width={28} height={28} />
-                    <span className="font-bold font-headline">KSTech Solutions</span>
+                  <Link
+                    href={`/${lang}`}
+                    className="flex items-center text-lg font-semibold"
+                  >
+                    <Image
+                      src="/logo.png"
+                      alt="KSTech Logo"
+                      width={28}
+                      height={28}
+                    />
                   </Link>
                 </SheetTitle>
-                <SheetDescription>
-                  The King of Electronics
-                </SheetDescription>
+                <SheetDescription>The King of Electronics</SheetDescription>
               </SheetHeader>
               <nav className="grid gap-6 text-lg font-medium mt-8">
-                {navLinks.map(link => (
-                    <Link key={link.href} href={`/${lang}${link.href}`} className="text-muted-foreground hover:text-primary transition-colors">
-                        {link.label}
-                    </Link>
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={`/${lang}${link.href}`}
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
+                    {link.label}
+                  </Link>
                 ))}
                 <Link href={`/${lang}/contact`} className="mt-4">
-                  <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">Book Now</Button>
+                  <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
+                    Book Now
+                  </Button>
                 </Link>
               </nav>
             </SheetContent>
           </Sheet>
         </div>
-
       </div>
     </>
-  )
+  );
 }

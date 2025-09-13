@@ -8,7 +8,11 @@ import type { BlogPost } from "@/lib/definitions";
 async function getBlogPosts(): Promise<BlogPost[]> {
   try {
     const blogPostsRef = collection(db, "blogPosts");
-    const q = query(blogPostsRef, where("status", "==", "Published"));
+    const q = query(
+      blogPostsRef,
+      where("status", "==", "Published"),
+      where("category", "!=", "Announcement")
+    );
     const blogPostsSnapshot = await getDocs(q);
 
     const posts = blogPostsSnapshot.docs.map(
