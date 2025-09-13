@@ -38,6 +38,7 @@ export default function HeroSlider() {
                   className="object-cover"
                   priority={index === 0}
                   data-ai-hint={image.imageHint}
+                  sizes="100vw"
                 />
             </CarouselItem>
           ))}

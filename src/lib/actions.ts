@@ -4,9 +4,12 @@
 import { z } from "zod"
 import { revalidatePath } from "next/cache"
 import { db } from "./firebase"
-import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, limit, writeBatch } from "firebase/firestore";
+import { collection, getDocs, addDoc } from "firebase/firestore";
 import type { Service, BlogPost, PortfolioProject } from "./definitions";
 
+// This server action is now only used on the non-admin contact form.
+// All admin-related database operations have been moved to client-side components
+// to ensure they run with the logged-in user's permissions.
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
