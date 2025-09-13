@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CheckCircle, Mail, Phone, MapPin, ArrowRight, Wrench } from "lucide-react";
-import prisma from "@/lib/prisma";
 import { faqs, serviceIcons } from "@/lib/data";
 import {
   Breadcrumb,
@@ -22,41 +21,70 @@ import {
 } from "@/components/ui/accordion";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import type { Service } from "@/lib/definitions";
+import { collection, getDocs, query, where, limit } from "firebase/firestore";
+import { db } from "@/lib/firebase";
 
 type Props = {
   params: { slug: string, lang: string };
 };
 
 export async function generateStaticParams() {
-  const services = await prisma.service.findMany({ select: { slug: true } });
-  return services.map((service) => ({
-    slug: service.slug,
+  const servicesSnapshot = await getDocs(collection(db, 'services'));
+  return servicesSnapshot.docs.map((doc) => ({
+    slug: doc.data().slug,
   }));
 }
 
-export default async function ServiceDetailPage({ params }: Props) {
-  const dbService = await prisma.service.findUnique({
-    where: { slug: params.slug },
-  });
+async function getService(slug: string): Promise<Service | null> {
+    const servicesCollection = collection(db, 'services');
+    const q = query(servicesCollection, where("slug", "==", slug), limit(1));
+    const serviceSnapshot = await getDocs(q);
 
-  if (!dbService) {
+    if (serviceSnapshot.empty) {
+        return null;
+    }
+
+    const doc = serviceSnapshot.docs[0];
+    const data = doc.data();
+    return {
+        id: doc.id,
+        title: data.title,
+        slug: data.slug,
+        short_desc: data.short_desc,
+        long_desc: data.long_desc,
+        details: data.details,
+        icon: serviceIcons[data.slug as keyof typeof serviceIcons] || Wrench,
+    } as Service;
+}
+
+async function getOtherServices(slug: string): Promise<Service[]> {
+    const servicesCollection = collection(db, 'services');
+    const q = query(servicesCollection, where("slug", "!=", slug), limit(5));
+    const servicesSnapshot = await getDocs(q);
+    const servicesList = servicesSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            title: data.title,
+            slug: data.slug,
+            short_desc: data.short_desc,
+            long_desc: data.long_desc,
+            details: data.details,
+            icon: serviceIcons[data.slug as keyof typeof serviceIcons] || Wrench,
+        } as Service;
+    });
+    return servicesList;
+}
+
+export default async function ServiceDetailPage({ params }: Props) {
+  const service = await getService(params.slug);
+
+  if (!service) {
     notFound();
   }
-
-  const icon = serviceIcons[dbService.slug as keyof typeof serviceIcons] || Wrench;
-  const gallery = PlaceHolderImages.filter(p => p.id.startsWith(`service-${dbService.slug}`));
-  const service: Service = { ...dbService, icon };
   
-  const dbOtherServices = await prisma.service.findMany({
-    where: { NOT: { slug: params.slug } },
-    take: 5,
-  });
-
-  const otherServices: Service[] = dbOtherServices.map(s => ({
-    ...s,
-    icon: serviceIcons[s.slug as keyof typeof serviceIcons] || Wrench,
-  }));
-  
+  const otherServices = await getOtherServices(params.slug);
+  const gallery = PlaceHolderImages.filter(p => p.id.startsWith(`service-${service.slug}`));
   const validGallery = gallery.filter(Boolean);
 
   return (

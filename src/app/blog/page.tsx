@@ -40,13 +40,15 @@ export default async function BlogPage() {
             <Card key={post.id} className="flex flex-col">
               {post.imageUrl && (
                 <CardHeader className="p-0">
-                  <Image
-                    src={post.imageUrl}
-                    alt={post.title}
-                    width={600}
-                    height={400}
-                    className="object-cover rounded-t-lg aspect-[3/2]"
-                  />
+                  <Link href={`/blog/${post.slug}`}>
+                    <Image
+                      src={post.imageUrl}
+                      alt={post.title}
+                      width={600}
+                      height={400}
+                      className="object-cover rounded-t-lg aspect-[3/2]"
+                    />
+                  </Link>
                 </CardHeader>
               )}
               <CardContent className="pt-6 flex-grow">
