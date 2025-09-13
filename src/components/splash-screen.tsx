@@ -45,6 +45,19 @@ const SplashScreen = ({ onFinished }: { onFinished: () => void }) => {
 export function AppWithSplashScreen({ children }: { children: React.ReactNode }) {
     const [loading, setLoading] = useState(true);
 
+    // This is a temporary fix to avoid splash screen on every navigation
+    const [isFirstLoad, setIsFirstLoad] = useState(true);
+
+    useEffect(() => {
+        if(isFirstLoad) {
+            setLoading(true);
+            setIsFirstLoad(false);
+        } else {
+            setLoading(false);
+        }
+    }, [isFirstLoad]);
+
+
     if (loading) {
         return <SplashScreen onFinished={() => setLoading(false)} />;
     }
