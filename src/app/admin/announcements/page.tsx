@@ -1,32 +1,108 @@
+
+"use client";
+
+import { useState, useEffect, useTransition } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MoreHorizontal, PlusCircle, Loader2 } from 'lucide-react';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuSeparator } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import { format } from 'date-fns';
-import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { collection, getDocs, orderBy, query, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import type { BlogPost } from '@/lib/definitions';
+import { useToast } from '@/hooks/use-toast';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
-async function getBlogPosts(): Promise<BlogPost[]> {
-    const postsCollection = collection(db, 'blogPosts');
-    const q = query(postsCollection, orderBy("date", "desc"));
-    const postsSnapshot = await getDocs(q);
-    const postList = postsSnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-            id: doc.id,
-            ...data,
-            date: data.date.toDate(),
-        } as BlogPost;
+export default function AdminAnnouncementsPage() {
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isPending, startTransition] = useTransition();
+  const [postToDelete, setPostToDelete] = useState<BlogPost | null>(null);
+
+  const { toast } = useToast();
+
+  useEffect(() => {
+    async function getBlogPosts() {
+      setIsLoading(true);
+      const postsCollection = collection(db, 'blogPosts');
+      const q = query(postsCollection, orderBy("date", "desc"));
+      const postsSnapshot = await getDocs(q);
+      const postList = postsSnapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
+              id: doc.id,
+              ...data,
+              date: data.date.toDate(),
+          } as BlogPost;
+      });
+      setBlogPosts(postList);
+      setIsLoading(false);
+    }
+    getBlogPosts();
+  }, []);
+
+  const handleTogglePublish = (post: BlogPost) => {
+    startTransition(async () => {
+      const newStatus = post.status === 'Published' ? 'Draft' : 'Published';
+      try {
+        const postRef = doc(db, "blogPosts", post.id);
+        await updateDoc(postRef, { status: newStatus });
+        
+        setBlogPosts(prevPosts => 
+            prevPosts.map(p => p.id === post.id ? {...p, status: newStatus} : p)
+        );
+
+        toast({
+          title: "Success!",
+          description: `Post has been ${newStatus.toLowerCase()}.`,
+        });
+      } catch (error) {
+        console.error("Error updating status: ", error);
+        toast({
+            variant: "destructive",
+            title: "Error!",
+            description: "Failed to update post status.",
+        });
+      }
     });
-    return postList;
-}
+  };
+  
+  const handleDeletePost = () => {
+    if (!postToDelete) return;
 
-export default async function AdminAnnouncementsPage() {
-  const blogPosts = await getBlogPosts();
+    startTransition(async () => {
+      try {
+        await deleteDoc(doc(db, "blogPosts", postToDelete.id));
+        setBlogPosts(prevPosts => prevPosts.filter(p => p.id !== postToDelete.id));
+        toast({
+          title: "Success!",
+          description: "Post has been deleted.",
+        });
+      } catch (error) {
+        console.error("Error deleting post: ", error);
+        toast({
+            variant: "destructive",
+            title: "Error!",
+            description: "Failed to delete post.",
+        });
+      } finally {
+        setPostToDelete(null);
+      }
+    });
+  };
+
 
   return (
     <div className="bg-secondary/50 flex-grow">
@@ -57,7 +133,13 @@ export default async function AdminAnnouncementsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {blogPosts.map((post) => (
+                  {isLoading ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="text-center h-24">
+                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+                      </TableCell>
+                    </TableRow>
+                  ) : blogPosts.map((post) => (
                     <TableRow key={post.id}>
                       <TableCell className="font-medium">{post.title}</TableCell>
                       <TableCell className="hidden sm:table-cell">
@@ -79,10 +161,13 @@ export default async function AdminAnnouncementsPage() {
                             <DropdownMenuItem asChild>
                                <Link href={`/admin/announcements/edit/${post.id}`}>Edit</Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => handleTogglePublish(post)} disabled={isPending}>
                                 {post.status === 'Published' ? 'Unpublish' : 'Publish'}
                             </DropdownMenuItem>
-                            <DropdownMenuItem className="text-destructive">Delete</DropdownMenuItem>
+                             <DropdownMenuSeparator />
+                            <DropdownMenuItem onSelect={() => setPostToDelete(post)} className="text-destructive" disabled={isPending}>
+                                Delete
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
@@ -93,7 +178,26 @@ export default async function AdminAnnouncementsPage() {
             </CardContent>
           </Card>
         </main>
+        
+        <AlertDialog open={!!postToDelete} onOpenChange={(open) => !open && setPostToDelete(null)}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete the post
+                        "{postToDelete?.title}".
+                    </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={handleDeletePost} className="bg-destructive hover:bg-destructive/90" disabled={isPending}>
+                        {isPending ? 'Deleting...' : 'Delete'}
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
       </div>
     </div>
   );
 }
+
