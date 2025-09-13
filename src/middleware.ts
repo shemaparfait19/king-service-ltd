@@ -30,18 +30,16 @@ const handleI18nRouting = (request: NextRequest) => {
 
 
 export function middleware(request: NextRequest) {
-  const pathname = request.nextUrl.pathname;
-  
-  // Skip middleware for admin pages
-  if (pathname.startsWith('/admin')) {
-    return NextResponse.next();
-  }
-
-  // Apply i18n routing logic
+  // The i18n routing is now the only logic needed here, as the matcher handles exclusions.
   return handleI18nRouting(request);
 }
 
 export const config = {
-  // Matcher ignoring `/_next/` and `/api/`
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico|images|admin).*)'],
+  // This matcher will run the middleware on all paths EXCEPT for those that start with:
+  // - api/
+  // - _next/static
+  // - _next/image
+  // - admin
+  // - or have a file extension (e.g., .ico, .png)
+  matcher: ['/((?!api|_next/static|_next/image|admin|.*\\..*).*)'],
 };
