@@ -2,13 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-1.0.x"]
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Service {
@@ -18,27 +18,19 @@ model Service {
   short_desc String
   long_desc  String   @db.Text
   details    String[]
-  icon       String // Storing icon name as string
-  gallery    Json[] // Storing gallery as an array of JSON objects
-}
-
-model FaqItem {
-  id       Int    @id @default(autoincrement())
-  question String
-  answer   String @db.Text
 }
 
 model BlogPost {
-  id       Int      @id @default(autoincrement())
-  title    String
-  slug     String   @unique
-  excerpt  String   @db.Text
-  content  String   @db.Text
-  date     DateTime
-  author   String
-  category String
-  imageUrl String?
-  imageHint String?
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String   @unique
+  excerpt   String   @db.Text
+  content   String   @db.Text
+  date      DateTime @default(now())
+  author    String
+  category  String
+  status    String   @default("Draft")
+  imageUrl  String?
 }
 
 model PortfolioProject {
@@ -47,5 +39,13 @@ model PortfolioProject {
   category    String
   description String  @db.Text
   imageUrl    String?
-  imageHint String?
+}
+
+model ContactSubmission {
+    id        Int      @id @default(autoincrement())
+    name      String
+    email     String
+    phone     String?
+    message   String   @db.Text
+    createdAt DateTime @default(now())
 }
