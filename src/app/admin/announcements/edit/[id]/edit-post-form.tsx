@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -18,7 +19,9 @@ import {
 } from "@/components/ui/select"
 import type { BlogPost } from '@/lib/definitions';
 import { useTransition } from 'react';
-import { updateBlogPost } from '@/lib/actions';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 const postSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -30,6 +33,7 @@ type PostFormValues = z.infer<typeof postSchema>;
 
 export function EditPostForm({ post }: { post: BlogPost }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
   const {
@@ -48,8 +52,23 @@ export function EditPostForm({ post }: { post: BlogPost }) {
 
   const onSubmit: SubmitHandler<PostFormValues> = (data) => {
     startTransition(async () => {
-        await updateBlogPost(post.id, data);
-        router.push('/admin/announcements');
+        try {
+            const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            const excerpt = data.content.substring(0, 150) + (data.content.length > 150 ? '...' : '');
+
+            const postRef = doc(db, "blogPosts", post.id);
+            await updateDoc(postRef, {
+                ...data,
+                slug,
+                excerpt,
+            });
+            toast({ title: "Success!", description: "Blog post updated." });
+            router.push('/admin/announcements');
+            router.refresh(); // to reflect changes
+        } catch (error) {
+            console.error("Error updating post: ", error);
+            toast({ variant: "destructive", title: "Error!", description: "Failed to update blog post." });
+        }
     });
   };
 

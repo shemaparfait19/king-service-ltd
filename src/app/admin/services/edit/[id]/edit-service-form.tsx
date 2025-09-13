@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -13,8 +14,10 @@ import { Trash, PlusCircle, Upload } from 'lucide-react';
 import Image from 'next/image';
 import { type Service } from '@/lib/definitions';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { updateService } from '@/lib/actions';
 import { useTransition } from 'react';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 const serviceSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -27,6 +30,7 @@ type ServiceFormValues = z.infer<typeof serviceSchema>;
 
 export function EditServiceForm({ service }: { service: Service }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
   const gallery = PlaceHolderImages.filter(p => p.id.startsWith(`service-${service.slug}`));
@@ -53,12 +57,20 @@ export function EditServiceForm({ service }: { service: Service }) {
 
   const onSubmit: SubmitHandler<ServiceFormValues> = (data) => {
     startTransition(async () => {
-        const serviceData = {
-            ...data,
-            details: data.details.map(d => d.value)
+        try {
+            const serviceData = {
+                ...data,
+                details: data.details.map(d => d.value)
+            }
+            const serviceRef = doc(db, "services", service.id);
+            await updateDoc(serviceRef, serviceData);
+            toast({ title: "Success!", description: "Service updated successfully." });
+            router.push('/admin/services');
+            router.refresh();
+        } catch (error) {
+            console.error("Error updating service: ", error);
+            toast({ variant: "destructive", title: "Error!", description: "Failed to update service." });
         }
-        await updateService(service.id, serviceData);
-        router.push('/admin/services');
     });
   };
 

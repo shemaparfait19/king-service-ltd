@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,7 +18,9 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { useTransition } from 'react';
-import { createBlogPost } from '@/lib/actions';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 const postSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -29,6 +32,7 @@ type PostFormValues = z.infer<typeof postSchema>;
 
 export default function NewAnnouncementPage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const {
     register,
@@ -46,8 +50,25 @@ export default function NewAnnouncementPage() {
 
   const onSubmit: SubmitHandler<PostFormValues> = (data) => {
     startTransition(async () => {
-        await createBlogPost(data);
-        router.push('/admin/announcements');
+        try {
+            const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            const excerpt = data.content.substring(0, 150) + (data.content.length > 150 ? '...' : '');
+            
+            await addDoc(collection(db, "blogPosts"), {
+                ...data,
+                slug,
+                excerpt,
+                author: 'Admin', // Default author
+                category: 'General', // Default category
+                date: new Date(),
+            });
+
+            toast({ title: "Success!", description: "Blog post created successfully." });
+            router.push('/admin/announcements');
+        } catch (error) {
+            console.error("Error creating post: ", error);
+            toast({ variant: "destructive", title: "Error!", description: "Failed to create blog post." });
+        }
     });
   };
 

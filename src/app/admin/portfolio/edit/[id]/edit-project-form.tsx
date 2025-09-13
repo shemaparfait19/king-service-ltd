@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,7 +13,9 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { type PortfolioProject } from '@/lib/definitions';
 import { useTransition } from 'react';
-import { updatePortfolioProject } from '@/lib/actions';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 const projectSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -25,6 +28,7 @@ type ProjectFormValues = z.infer<typeof projectSchema>;
 
 export function EditProjectForm({ project }: { project: PortfolioProject }) {
   const router = useRouter();
+  const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
 
   const {
@@ -43,8 +47,16 @@ export function EditProjectForm({ project }: { project: PortfolioProject }) {
 
   const onSubmit: SubmitHandler<ProjectFormValues> = (data) => {
     startTransition(async () => {
-        await updatePortfolioProject(project.id, data);
-        router.push('/admin/portfolio');
+        try {
+            const projectRef = doc(db, "portfolioProjects", project.id);
+            await updateDoc(projectRef, data);
+            toast({ title: "Success!", description: "Portfolio project updated." });
+            router.push('/admin/portfolio');
+            router.refresh();
+        } catch (error) {
+            console.error("Error updating project: ", error);
+            toast({ variant: "destructive", title: "Error!", description: "Failed to update project." });
+        }
     });
   };
 

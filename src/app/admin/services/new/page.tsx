@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent } from '@/components/ui/card';
@@ -10,8 +11,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { Trash, PlusCircle, Upload } from 'lucide-react';
-import { createService } from '@/lib/actions';
 import { useTransition } from 'react';
+import { addDoc, collection } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 const serviceSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -24,6 +27,7 @@ type ServiceFormValues = z.infer<typeof serviceSchema>;
 
 export default function NewServicePage() {
   const router = useRouter();
+  const { toast } = useToast();
   const [isPending, startTransition] = useTransition();
   const {
     register,
@@ -47,14 +51,20 @@ export default function NewServicePage() {
 
   const onSubmit: SubmitHandler<ServiceFormValues> = (data) => {
     startTransition(async () => {
-        const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-        const serviceData = {
-            ...data,
-            slug,
-            details: data.details.map(d => d.value)
+        try {
+            const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+            const serviceData = {
+                ...data,
+                slug,
+                details: data.details.map(d => d.value)
+            }
+            await addDoc(collection(db, "services"), serviceData);
+            toast({ title: "Success!", description: "Service created successfully." });
+            router.push('/admin/services');
+        } catch (error) {
+            console.error("Error creating service: ", error);
+            toast({ variant: "destructive", title: "Error!", description: "Failed to create service." });
         }
-        await createService(serviceData);
-        router.push('/admin/services');
     });
   };
 
