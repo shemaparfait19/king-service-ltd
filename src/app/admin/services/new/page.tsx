@@ -10,6 +10,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { Trash, PlusCircle, Upload } from 'lucide-react';
+import { createService } from '@/lib/actions';
+import { useTransition } from 'react';
 
 const serviceSchema = z.object({
   title: z.string().min(3, 'Title must be at least 3 characters'),
@@ -22,6 +24,7 @@ type ServiceFormValues = z.infer<typeof serviceSchema>;
 
 export default function NewServicePage() {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const {
     register,
     handleSubmit,
@@ -43,9 +46,16 @@ export default function NewServicePage() {
   });
 
   const onSubmit: SubmitHandler<ServiceFormValues> = (data) => {
-    console.log('New Service:', data);
-    // Here you would typically call an API to create the service and upload images
-    router.push('/admin/services');
+    startTransition(async () => {
+        const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+        const serviceData = {
+            ...data,
+            slug,
+            details: data.details.map(d => d.value)
+        }
+        await createService(serviceData);
+        router.push('/admin/services');
+    });
   };
 
   return (
@@ -118,7 +128,7 @@ export default function NewServicePage() {
 
                 <div className="flex justify-end gap-4 mt-4">
                   <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-                  <Button type="submit">Create Service</Button>
+                  <Button type="submit" disabled={isPending}>{isPending ? 'Creating...' : 'Create Service'}</Button>
                 </div>
               </CardContent>
             </Card>

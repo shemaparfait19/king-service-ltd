@@ -1,36 +1,16 @@
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { MoreHorizontal, PlusCircle } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
 import Image from 'next/image';
-import { PlaceHolderImages } from '@/lib/placeholder-images'; // Using placeholder for now
 import { Badge } from '@/components/ui/badge';
+import prisma from '@/lib/prisma';
 
-// This would come from your database
-const projects = [
-    {
-      id: 1,
-      title: 'Commercial Complex Security & Network Overhaul',
-      category: 'CCTV & Internet',
-      image: PlaceHolderImages.find(p => p.id === 'portfolio-1'),
-    },
-    {
-      id: 2,
-      title: 'Residential Solar Power Implementation',
-      category: 'Solar Systems',
-      image: PlaceHolderImages.find(p => p.id === 'service-solar'),
-    },
-    {
-      id: 3,
-      title: 'Industrial Machine Control Panel Repair',
-      category: 'Industrial Electronics',
-      image: PlaceHolderImages.find(p => p.id === 'hero-2'),
-    },
-];
+export default async function AdminPortfolioPage() {
+  const projects = await prisma.portfolioProject.findMany();
 
-export default function AdminPortfolioPage() {
   return (
     <div className="bg-secondary/50 flex-grow">
       <div className="container py-12">
@@ -63,9 +43,9 @@ export default function AdminPortfolioPage() {
                   {projects.map((project) => (
                     <TableRow key={project.id}>
                       <TableCell className="hidden sm:table-cell">
-                        {project.image && (
+                        {project.imageUrl && (
                           <Image
-                            src={project.image.imageUrl}
+                            src={project.imageUrl}
                             alt={project.title}
                             width={80}
                             height={60}

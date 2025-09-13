@@ -5,33 +5,14 @@ import { Badge } from '@/components/ui/badge';
 import { MoreHorizontal, PlusCircle } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
+import prisma from '@/lib/prisma';
+import { format } from 'date-fns';
 
-// Placeholder data for blog posts
-const blogPosts = [
-    {
-      id: 1,
-      title: '5 Signs Your Refrigerator Needs a Repair',
-      status: 'Published',
-      date: 'July 15, 2024',
-      author: 'Admin',
-    },
-    {
-      id: 2,
-      title: 'The Benefits of a Professionally Installed CCTV System',
-      status: 'Published',
-      date: 'July 10, 2024',
-      author: 'Admin',
-    },
-    {
-      id: 3,
-      title: 'Getting Started with Solar Power for Your Home',
-      status: 'Draft',
-      date: 'July 5, 2024',
-      author: 'Admin',
-    },
-  ];
+export default async function AdminAnnouncementsPage() {
+  const blogPosts = await prisma.blogPost.findMany({
+    orderBy: { date: 'desc' }
+  });
 
-export default function AdminAnnouncementsPage() {
   return (
     <div className="bg-secondary/50 flex-grow">
       <div className="container py-12">
@@ -69,7 +50,7 @@ export default function AdminAnnouncementsPage() {
                             {post.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-muted-foreground">{post.date}</TableCell>
+                      <TableCell className="hidden md:table-cell text-muted-foreground">{format(post.date, 'MMMM d, yyyy')}</TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>

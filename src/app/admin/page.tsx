@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Newspaper, Wrench, Languages, ImageIcon, CalendarCheck, FolderKanban, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { services, blogPosts, portfolioProjects } from '@/lib/data';
 import { Button } from '@/components/ui/button';
+import prisma from '@/lib/prisma';
+import { format } from 'date-fns';
 
 const adminFeatures = [
     {
@@ -43,9 +44,20 @@ const adminFeatures = [
     }
 ]
 
-export default function AdminDashboardPage() {
-    const recentPosts = blogPosts.slice(0, 3);
-    const recentProjects = portfolioProjects.slice(0, 3);
+export default async function AdminDashboardPage() {
+    const servicesCount = await prisma.service.count();
+    const portfolioCount = await prisma.portfolioProject.count();
+    const blogCount = await prisma.blogPost.count();
+
+    const recentPosts = await prisma.blogPost.findMany({
+        take: 3,
+        orderBy: { date: 'desc' }
+    });
+
+    const recentProjects = await prisma.portfolioProject.findMany({
+        take: 3,
+        orderBy: { id: 'desc' }
+    });
 
     return (
         <div className="bg-secondary/50 flex-grow">
@@ -68,7 +80,7 @@ export default function AdminDashboardPage() {
                                         <Wrench className="h-4 w-4 text-muted-foreground" />
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold">{services.length}</div>
+                                        <div className="text-2xl font-bold">{servicesCount}</div>
                                     </CardContent>
                                 </Card>
                                 <Card>
@@ -77,7 +89,7 @@ export default function AdminDashboardPage() {
                                         <FolderKanban className="h-4 w-4 text-muted-foreground" />
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold">{portfolioProjects.length}</div>
+                                        <div className="text-2xl font-bold">{portfolioCount}</div>
                                     </CardContent>
                                 </Card>
                                 <Card>
@@ -86,7 +98,7 @@ export default function AdminDashboardPage() {
                                         <Newspaper className="h-4 w-4 text-muted-foreground" />
                                     </CardHeader>
                                     <CardContent>
-                                        <div className="text-2xl font-bold">{blogPosts.length}</div>
+                                        <div className="text-2xl font-bold">{blogCount}</div>
                                     </CardContent>
                                 </Card>
                             </div>
@@ -104,7 +116,7 @@ export default function AdminDashboardPage() {
                                         {recentPosts.map(post => (
                                             <div key={post.id} className="flex flex-col">
                                                 <Link href={`/admin/announcements/edit/${post.id}`} className="font-semibold hover:underline">{post.title}</Link>
-                                                <p className="text-sm text-muted-foreground">{post.date}</p>
+                                                <p className="text-sm text-muted-foreground">{format(post.date, 'MMMM d, yyyy')}</p>
                                             </div>
                                         ))}
                                     </div>

@@ -16,6 +16,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { useTransition } from 'react';
+import { createBlogPost } from '@/lib/actions';
 
 const postSchema = z.object({
   title: z.string().min(5, 'Title must be at least 5 characters'),
@@ -27,6 +29,7 @@ type PostFormValues = z.infer<typeof postSchema>;
 
 export default function NewAnnouncementPage() {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
   const {
     register,
     handleSubmit,
@@ -42,9 +45,10 @@ export default function NewAnnouncementPage() {
   });
 
   const onSubmit: SubmitHandler<PostFormValues> = (data) => {
-    console.log('New Post:', data);
-    // Here you would typically call an API to create the post
-    router.push('/admin/announcements');
+    startTransition(async () => {
+        await createBlogPost(data);
+        router.push('/admin/announcements');
+    });
   };
 
   return (
@@ -87,7 +91,7 @@ export default function NewAnnouncementPage() {
 
                 <div className="flex justify-end gap-4">
                   <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
-                  <Button type="submit">Create Post</Button>
+                  <Button type="submit" disabled={isPending}>{isPending ? 'Creating...' : 'Create Post'}</Button>
                 </div>
               </CardContent>
             </Card>

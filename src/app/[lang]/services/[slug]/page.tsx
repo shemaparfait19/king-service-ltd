@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle, Mail, Phone, MapPin, ArrowRight } from "lucide-react";
-
-import { services, faqs } from "@/lib/data";
+import { CheckCircle, Mail, Phone, MapPin, ArrowRight, Wrench } from "lucide-react";
+import prisma from "@/lib/prisma";
+import { faqs, serviceIcons } from "@/lib/data";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -20,26 +20,44 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { Button } from "@/components/ui/button";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
+import type { Service } from "@/lib/definitions";
 
 type Props = {
   params: { slug: string, lang: string };
 };
 
 export async function generateStaticParams() {
+  const services = await prisma.service.findMany({ select: { slug: true } });
   return services.map((service) => ({
     slug: service.slug,
   }));
 }
 
 export default async function ServiceDetailPage({ params }: Props) {
-  const service = services.find((s) => s.slug === params.slug);
+  const dbService = await prisma.service.findUnique({
+    where: { slug: params.slug },
+  });
 
-  if (!service) {
+  if (!dbService) {
     notFound();
   }
 
-  const otherServices = services.filter(s => s.slug !== params.slug).slice(0, 5);
+  const icon = serviceIcons[dbService.slug as keyof typeof serviceIcons] || Wrench;
+  const gallery = PlaceHolderImages.filter(p => p.id.startsWith(`service-${dbService.slug}`));
+  const service: Service = { ...dbService, icon };
+  
+  const dbOtherServices = await prisma.service.findMany({
+    where: { NOT: { slug: params.slug } },
+    take: 5,
+  });
+
+  const otherServices: Service[] = dbOtherServices.map(s => ({
+    ...s,
+    icon: serviceIcons[s.slug as keyof typeof serviceIcons] || Wrench,
+  }));
+  
+  const validGallery = gallery.filter(Boolean);
 
   return (
     <>
@@ -128,11 +146,11 @@ export default async function ServiceDetailPage({ params }: Props) {
                 ))}
               </ul>
 
-              {service.gallery.length > 0 && (
+              {validGallery.length > 0 && (
                 <>
                   <h2 className="font-headline mt-12">Our Work</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {service.gallery.map((image) => (
+                    {validGallery.map((image) => (
                       <Image
                         key={image.id}
                         src={image.imageUrl}

@@ -1,12 +1,20 @@
-import { services } from '@/lib/data';
+import { serviceIcons } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { MoreHorizontal, PlusCircle } from 'lucide-react';
+import { MoreHorizontal, PlusCircle, Wrench } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
+import prisma from '@/lib/prisma';
+import type { Service } from '@/lib/definitions';
 
-export default function AdminServicesPage() {
+export default async function AdminServicesPage() {
+  const dbServices = await prisma.service.findMany();
+  const services: Service[] = dbServices.map(service => ({
+      ...service,
+      icon: serviceIcons[service.slug as keyof typeof serviceIcons] || Wrench,
+  }));
+
   return (
     <div className="bg-secondary/50 flex-grow">
       <div className="container py-12">

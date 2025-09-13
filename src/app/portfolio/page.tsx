@@ -1,10 +1,10 @@
 import Image from 'next/image';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { portfolioProjects } from '@/lib/data';
+import prisma from '@/lib/prisma';
 
-export default function PortfolioPage() {
-  const projects = portfolioProjects;
+export default async function PortfolioPage() {
+  const projects = await prisma.portfolioProject.findMany();
 
   return (
      <div className="bg-background">
@@ -19,15 +19,14 @@ export default function PortfolioPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {projects.map((project) => (
             <Card key={project.id} className="overflow-hidden group">
-                {project.image && (
+                {project.imageUrl && (
                   <div className="overflow-hidden">
                     <Image
-                      src={project.image.imageUrl}
+                      src={project.imageUrl}
                       alt={project.title}
                       width={700}
                       height={500}
                       className="object-cover w-full aspect-[4/3] group-hover:scale-105 transition-transform duration-300"
-                      data-ai-hint={project.image.imageHint}
                     />
                   </div>
                 )}

@@ -1,14 +1,9 @@
 import { type LucideIcon } from 'lucide-react';
+import type { Service as PrismaService } from '@prisma/client'
 
-export type Service = {
-  id: number;
-  title: string;
-  slug: string;
-  icon: LucideIcon; // Changed to store the component directly
-  short_desc: string;
-  long_desc: string;
-  details: string[];
-  gallery: ImagePlaceholder[];
+// Extending Prisma's generated Service type with the icon component
+export type Service = PrismaService & {
+    icon: LucideIcon;
 };
 
 export type FaqItem = {
@@ -24,22 +19,5 @@ export type ImagePlaceholder = {
   imageHint: string;
 };
 
-export type BlogPost = {
-  id: number;
-  title: string;
-  slug: string;
-  excerpt: string;
-  content: string;
-  date: string;
-  author: string;
-  category: string;
-  image?: ImagePlaceholder;
-}
-
-export type PortfolioProject = {
-  id: number;
-  title: string;
-  category: string;
-  description: string;
-  image?: ImagePlaceholder;
-}
+// These types are now derived from Prisma's generated types
+export type { BlogPost, PortfolioProject } from '@prisma/client';

@@ -2,9 +2,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { blogPosts } from '@/lib/data';
+import prisma from '@/lib/prisma';
+import { format } from 'date-fns';
 
-export default function BlogPage() {
+export default async function BlogPage() {
+  const blogPosts = await prisma.blogPost.findMany({
+    where: { status: 'Published' },
+    orderBy: { date: 'desc' }
+  });
 
   return (
     <div className="bg-background">
@@ -19,15 +24,14 @@ export default function BlogPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {blogPosts.map((post) => (
             <Card key={post.id} className="flex flex-col">
-              {post.image && (
+              {post.imageUrl && (
                 <CardHeader className="p-0">
                   <Image
-                    src={post.image.imageUrl}
+                    src={post.imageUrl}
                     alt={post.title}
                     width={600}
                     height={400}
                     className="object-cover rounded-t-lg aspect-[3/2]"
-                    data-ai-hint={post.image.imageHint}
                   />
                 </CardHeader>
               )}
@@ -36,7 +40,7 @@ export default function BlogPage() {
                   <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-2">
-                  {post.date} by {post.author}
+                  {format(post.date, 'MMMM d, yyyy')} by {post.author}
                 </p>
                 <p className="mt-4 text-muted-foreground">{post.excerpt}</p>
               </CardContent>

@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
+import { format } from 'date-fns';
 
 import {
   Breadcrumb,
@@ -12,17 +13,20 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import { blogPosts } from '@/lib/data';
+import prisma from '@/lib/prisma';
 
 
 export async function generateStaticParams() {
-    return blogPosts.map((post) => ({
+    const posts = await prisma.blogPost.findMany({ select: { slug: true } });
+    return posts.map((post) => ({
       slug: post.slug,
     }));
   }
 
-export default function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = blogPosts.find((p) => p.slug === params.slug);
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+  const post = await prisma.blogPost.findUnique({
+    where: { slug: params.slug },
+  });
 
   if (!post) {
     notFound();
@@ -60,18 +64,17 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
                   {post.title}
                 </h1>
                 <p className="mt-4 text-muted-foreground">
-                  Posted on {post.date} by {post.author}
+                  Posted on {format(post.date, 'MMMM d, yyyy')} by {post.author}
                 </p>
               </header>
 
-              {post.image && (
+              {post.imageUrl && (
                 <Image
-                  src={post.image.imageUrl}
+                  src={post.imageUrl}
                   alt={post.title}
                   width={1200}
                   height={600}
                   className="rounded-lg object-cover aspect-[2/1] w-full mb-8"
-                  data-ai-hint={post.image.imageHint}
                 />
               )}
 

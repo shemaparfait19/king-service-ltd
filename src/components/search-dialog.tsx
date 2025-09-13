@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useTransition } from "react"
 import Link from "next/link"
-import { Search } from "lucide-react"
+import { Search, Loader2 } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -12,62 +12,20 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
-import { services, blogPosts, portfolioProjects } from "@/lib/data"
-
-type SearchResultItem = {
-  title: string;
-  href: string;
-  excerpt?: string;
-};
-
-type SearchResultGroup = {
-  group: string;
-  items: SearchResultItem[];
-};
+import { searchSite, type SearchResultGroup } from "@/lib/actions"
 
 export function SearchDialog() {
   const [query, setQuery] = useState("")
   const [results, setResults] = useState<SearchResultGroup[]>([])
   const [open, setOpen] = useState(false)
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
     if (query.length > 2) {
-      const lowerCaseQuery = query.toLowerCase();
-      
-      const serviceResults = services
-        .filter(s =>
-          s.title.toLowerCase().includes(lowerCaseQuery) ||
-          s.short_desc.toLowerCase().includes(lowerCaseQuery)
-        )
-        .map(s => ({ title: s.title, href: `/services/${s.slug}`, excerpt: s.short_desc }));
-      
-      const blogResults = blogPosts
-        .filter(p =>
-          p.title.toLowerCase().includes(lowerCaseQuery) ||
-          p.excerpt.toLowerCase().includes(lowerCaseQuery)
-        )
-        .map(p => ({ title: p.title, href: `/blog/${p.slug}`, excerpt: p.excerpt }));
-        
-      const portfolioResults = portfolioProjects
-        .filter(p =>
-          p.title.toLowerCase().includes(lowerCaseQuery) ||
-          p.description.toLowerCase().includes(lowerCaseQuery)
-        )
-        .map(p => ({ title: p.title, href: `/portfolio`, excerpt: p.description }));
-
-
-      const newResults: SearchResultGroup[] = [];
-      if (serviceResults.length > 0) {
-        newResults.push({ group: "Services", items: serviceResults });
-      }
-      if (blogResults.length > 0) {
-        newResults.push({ group: "Announcements", items: blogResults });
-      }
-      if (portfolioResults.length > 0) {
-        newResults.push({ group: "Portfolio Projects", items: portfolioResults });
-      }
-
-      setResults(newResults);
+      startTransition(async () => {
+        const searchResults = await searchSite(query);
+        setResults(searchResults);
+      });
     } else {
       setResults([]);
     }
@@ -101,9 +59,10 @@ export function SearchDialog() {
               onChange={(e) => setQuery(e.target.value)}
               autoFocus
             />
+            {isPending && <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground animate-spin" />}
           </div>
           <div className="mt-4 space-y-4 max-h-[60vh] overflow-y-auto">
-            {query.length > 0 && results.length === 0 && (
+            {query.length > 0 && !isPending && results.length === 0 && (
                 <p className="text-center text-muted-foreground">
                     {query.length > 2 ? "No results found." : "Keep typing to see results..."}
                 </p>
