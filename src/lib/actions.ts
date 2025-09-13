@@ -6,7 +6,6 @@ import { revalidatePath } from "next/cache"
 import { db } from "./firebase"
 import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, limit, writeBatch } from "firebase/firestore";
 import type { Service, BlogPost, PortfolioProject } from "./definitions";
-import { sampleServices, sampleBlogPosts, samplePortfolioProjects } from "./sample-data";
 
 
 const contactFormSchema = z.object({
@@ -231,54 +230,4 @@ export async function deleteService(id: string) {
     await deleteDoc(doc(db, "services", id));
     revalidatePath('/admin/services');
     revalidatePath('/services');
-}
-
-// --- Seeding Action ---
-export async function seedDatabase() {
-    try {
-        const batch = writeBatch(db);
-
-        // Clear existing data (optional, but good for a clean seed)
-        const collections = ['services', 'blogPosts', 'portfolioProjects'];
-        for (const col of collections) {
-            const snapshot = await getDocs(collection(db, col));
-            snapshot.docs.forEach((doc) => {
-                batch.delete(doc.ref);
-            });
-        }
-        
-        // Seed services
-        sampleServices.forEach((service) => {
-            const { icon, ...serviceData } = service; // Exclude icon from data
-            const docRef = doc(collection(db, 'services'));
-            batch.set(docRef, serviceData);
-        });
-
-        // Seed blog posts
-        sampleBlogPosts.forEach((post) => {
-            const docRef = doc(collection(db, 'blogPosts'));
-            // Firestore handles Date objects automatically
-            batch.set(docRef, {...post, date: new Date(post.date) });
-        });
-
-        // Seed portfolio projects
-        samplePortfolioProjects.forEach((project) => {
-            const docRef = doc(collection(db, 'portfolioProjects'));
-            batch.set(docRef, project);
-        });
-
-        await batch.commit();
-
-        revalidatePath('/');
-        revalidatePath('/admin');
-        revalidatePath('/services');
-        revalidatePath('/blog');
-        revalidatePath('/portfolio');
-
-        return { success: true, message: 'Database seeded successfully!' };
-
-    } catch (error) {
-        console.error("Database seeding failed:", error);
-        return { success: false, message: `Database seeding failed: ${error instanceof Error ? error.message : 'Unknown error'}` };
-    }
 }
