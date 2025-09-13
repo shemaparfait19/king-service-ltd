@@ -4,7 +4,7 @@ import * as React from "react";
 import Image from "next/image";
 import Link from "next/link";
 import Autoplay from "embla-carousel-autoplay";
-import { SafeImage } from "@/components/ui/safe-image";
+import { ExternalImage } from "@/components/ui/external-image";
 
 import {
   Carousel,
@@ -47,10 +47,8 @@ export default function HeroSlider() {
             } as HeroImage)
         );
 
-        console.log("Fetched hero images:", images);
         setHeroImages(images);
       } catch (error) {
-        console.error("Error fetching hero images:", error);
         // Fallback to placeholder images if Firebase fails
         setHeroImages([
           {
@@ -96,7 +94,7 @@ export default function HeroSlider() {
                 key={image.id}
                 className="pl-0 relative w-full h-full"
               >
-                <SafeImage
+                <ExternalImage
                   src={image.imageUrl}
                   alt={image.description}
                   fill

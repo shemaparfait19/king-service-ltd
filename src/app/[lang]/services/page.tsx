@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { serviceIcons } from "@/lib/data";
 import Image from "next/image";
-import { SafeImage } from "@/components/ui/safe-image";
+import { ExternalImage } from "@/components/ui/external-image";
 import type { Service } from "@/lib/definitions";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -27,7 +27,6 @@ async function getServices(): Promise<Service[]> {
     } as Service;
   });
 
-  console.log("Fetched services:", servicesList);
   return servicesList;
 }
 
@@ -63,7 +62,7 @@ export default async function ServicesPage({
                 <CardHeader className="p-0 border-b">
                   <div className="overflow-hidden aspect-[4/3] relative">
                     {service.imageUrl ? (
-                      <SafeImage
+                      <ExternalImage
                         src={service.imageUrl}
                         alt={service.title}
                         fill

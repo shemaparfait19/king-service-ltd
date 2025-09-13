@@ -1,23 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useState } from "react";
 import { AlertCircle } from "lucide-react";
 
-// Custom loader that allows any domain
-const customLoader = ({
-  src,
-  width,
-  quality,
-}: {
-  src: string;
-  width: number;
-  quality?: number;
-}) => {
-  return `${src}?w=${width}&q=${quality || 75}`;
-};
-
-interface SafeImageProps {
+interface ExternalImageProps {
   src: string;
   alt: string;
   width?: number;
@@ -29,7 +15,7 @@ interface SafeImageProps {
   fallbackIcon?: React.ComponentType<{ className?: string }>;
 }
 
-export function SafeImage({
+export function ExternalImage({
   src,
   alt,
   width,
@@ -39,7 +25,7 @@ export function SafeImage({
   sizes,
   priority = false,
   fallbackIcon: FallbackIcon = AlertCircle,
-}: SafeImageProps) {
+}: ExternalImageProps) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -63,18 +49,18 @@ export function SafeImage({
           <div className="h-8 w-8 rounded bg-muted-foreground/20" />
         </div>
       )}
-      <Image
+      <img
         src={src}
         alt={alt}
         width={width}
         height={height}
-        fill={fill}
         className={`${className} ${
           isLoading ? "opacity-0" : "opacity-100"
-        } transition-opacity duration-300`}
+        } transition-opacity duration-300 ${
+          fill ? "w-full h-full object-cover" : ""
+        }`}
         sizes={sizes}
-        priority={priority}
-        loader={customLoader}
+        loading={priority ? "eager" : "lazy"}
         onError={() => {
           setHasError(true);
           setIsLoading(false);
