@@ -2,12 +2,11 @@ import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { services as servicesData } from "@/lib/data";
-import { getIcon } from "@/lib/definitions";
+import { services } from "@/lib/data";
 import Image from "next/image";
 
 export default function ServicesPage() {
-  const services = servicesData.map(s => ({...s, icon: getIcon(s.icon)}));
+
   return (
     <div className="bg-background">
         <div className="container py-12 md:py-24">
@@ -21,7 +20,7 @@ export default function ServicesPage() {
                 {services.map((service) => (
                     <Card key={service.id} className="flex flex-col overflow-hidden group hover:shadow-lg transition-shadow duration-300">
                         <Link href={`/services/${service.slug}`} className="flex flex-col h-full">
-                            {service.gallery.length > 0 && (
+                            {service.gallery.length > 0 && service.gallery[0] && (
                                 <CardHeader className="p-0 border-b">
                                     <div className="overflow-hidden aspect-[4/3] relative">
                                         <Image

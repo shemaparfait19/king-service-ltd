@@ -10,13 +10,11 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import HeroSlider from '@/components/hero-slider';
-import { services as servicesData } from '@/lib/data';
-import { getIcon } from '@/lib/definitions';
+import { services } from '@/lib/data';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export default function Home() {
   const portfolioImage = PlaceHolderImages.find(p => p.id === 'portfolio-1');
-  const services = servicesData.map(s => ({...s, icon: getIcon(s.icon)}));
 
   return (
     <div className="flex flex-col min-h-[100dvh]">
@@ -39,7 +37,7 @@ export default function Home() {
              {services.slice(0, 8).map((service) => (
                 <Card key={service.id} className="flex flex-col overflow-hidden group hover:shadow-lg transition-shadow duration-300">
                     <Link href={`/services/${service.slug}`} className="flex flex-col h-full">
-                        {service.gallery.length > 0 && (
+                        {service.gallery.length > 0 && service.gallery[0] && (
                             <CardHeader className="p-0 border-b">
                                 <div className="overflow-hidden aspect-[4/3] relative">
                                     <Image
