@@ -1,10 +1,22 @@
 import Image from 'next/image';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import prisma from '@/lib/prisma';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { PortfolioProject } from '@/lib/definitions';
+
+async function getProjects(): Promise<PortfolioProject[]> {
+    const projectsCollection = collection(db, 'portfolioProjects');
+    const projectsSnapshot = await getDocs(projectsCollection);
+    const projectsList = projectsSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+    } as PortfolioProject));
+    return projectsList;
+}
 
 export default async function PortfolioPage() {
-  const projects = await prisma.portfolioProject.findMany();
+  const projects = await getProjects();
 
   return (
      <div className="bg-background">

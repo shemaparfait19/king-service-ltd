@@ -2,8 +2,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Newspaper, Wrench, Languages, ImageIcon, CalendarCheck, FolderKanban, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import prisma from '@/lib/prisma';
 import { format } from 'date-fns';
+import { collection, getDocs, limit, orderBy, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { BlogPost, PortfolioProject } from '@/lib/definitions';
 
 const adminFeatures = [
     {
@@ -42,22 +44,33 @@ const adminFeatures = [
         icon: Languages,
         href: "#",
     }
-]
+];
+
+async function getDashboardData() {
+    const servicesSnapshot = await getDocs(collection(db, 'services'));
+    const portfolioSnapshot = await getDocs(collection(db, 'portfolioProjects'));
+    const blogSnapshot = await getDocs(collection(db, 'blogPosts'));
+
+    const recentPostsQuery = query(collection(db, 'blogPosts'), orderBy('date', 'desc'), limit(3));
+    const recentPostsSnapshot = await getDocs(recentPostsQuery);
+    const recentPosts = recentPostsSnapshot.docs.map(doc => ({id: doc.id, ...doc.data(), date: doc.data().date.toDate() } as BlogPost));
+
+    const recentProjectsQuery = query(collection(db, 'portfolioProjects'), limit(3)); // No date field, just get latest added
+    const recentProjectsSnapshot = await getDocs(recentProjectsQuery);
+    const recentProjects = recentProjectsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as PortfolioProject));
+
+    return {
+        servicesCount: servicesSnapshot.size,
+        portfolioCount: portfolioSnapshot.size,
+        blogCount: blogSnapshot.size,
+        recentPosts,
+        recentProjects,
+    }
+}
+
 
 export default async function AdminDashboardPage() {
-    const servicesCount = await prisma.service.count();
-    const portfolioCount = await prisma.portfolioProject.count();
-    const blogCount = await prisma.blogPost.count();
-
-    const recentPosts = await prisma.blogPost.findMany({
-        take: 3,
-        orderBy: { date: 'desc' }
-    });
-
-    const recentProjects = await prisma.portfolioProject.findMany({
-        take: 3,
-        orderBy: { id: 'desc' }
-    });
+    const { servicesCount, portfolioCount, blogCount, recentPosts, recentProjects } = await getDashboardData();
 
     return (
         <div className="bg-secondary/50 flex-grow">
@@ -116,7 +129,7 @@ export default async function AdminDashboardPage() {
                                         {recentPosts.map(post => (
                                             <div key={post.id} className="flex flex-col">
                                                 <Link href={`/admin/announcements/edit/${post.id}`} className="font-semibold hover:underline">{post.title}</Link>
-                                                <p className="text-sm text-muted-foreground">{format(post.date, 'MMMM d, yyyy')}</p>
+                                                <p className="text-sm text-muted-foreground">{format(new Date(post.date), 'MMMM d, yyyy')}</p>
                                             </div>
                                         ))}
                                     </div>

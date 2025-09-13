@@ -16,7 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import type { BlogPost } from '@prisma/client';
+import type { BlogPost } from '@/lib/definitions';
 import { useTransition } from 'react';
 import { updateBlogPost } from '@/lib/actions';
 

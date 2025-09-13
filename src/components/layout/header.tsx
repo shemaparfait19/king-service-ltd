@@ -1,16 +1,15 @@
 import Link from "next/link"
 import { Power, UserCog } from "lucide-react"
-
-import prisma from "@/lib/prisma"
+import { collection, getDocs, limit, query, orderBy } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
 import { HeaderClient } from "./header-client"
+import type { Service } from "@/lib/definitions";
 
 export default async function SiteHeader() {
-  const services = await prisma.service.findMany({
-    take: 8,
-    orderBy: {
-      title: 'asc'
-    }
-  });
+  const servicesCollection = collection(db, 'services');
+  const q = query(servicesCollection, orderBy('title', 'asc'), limit(8));
+  const servicesSnapshot = await getDocs(q);
+  const services = servicesSnapshot.docs.map(doc => doc.data() as Omit<Service, 'icon' | 'id'>);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">

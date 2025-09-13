@@ -13,20 +13,38 @@ import {
 } from '@/components/ui/breadcrumb';
 import { Badge } from '@/components/ui/badge';
 import Link from 'next/link';
-import prisma from '@/lib/prisma';
+import { collection, getDocs, query, where, limit } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { BlogPost } from '@/lib/definitions';
 
 
 export async function generateStaticParams() {
-    const posts = await prisma.blogPost.findMany({ select: { slug: true } });
-    return posts.map((post) => ({
-      slug: post.slug,
+    const postsSnapshot = await getDocs(collection(db, 'blogPosts'));
+    return postsSnapshot.docs.map((doc) => ({
+      slug: doc.data().slug,
     }));
-  }
+}
+
+async function getPost(slug: string): Promise<BlogPost | null> {
+    const postsCollection = collection(db, 'blogPosts');
+    const q = query(postsCollection, where("slug", "==", slug), limit(1));
+    const postSnapshot = await getDocs(q);
+
+    if (postSnapshot.empty) {
+        return null;
+    }
+    const doc = postSnapshot.docs[0];
+    const data = doc.data();
+
+    return {
+        id: doc.id,
+        ...data,
+        date: data.date.toDate(),
+    } as BlogPost;
+}
 
 export default async function BlogPostPage({ params }: { params: { slug: string } }) {
-  const post = await prisma.blogPost.findUnique({
-    where: { slug: params.slug },
-  });
+  const post = await getPost(params.slug);
 
   if (!post) {
     notFound();
@@ -64,7 +82,7 @@ export default async function BlogPostPage({ params }: { params: { slug: string 
                   {post.title}
                 </h1>
                 <p className="mt-4 text-muted-foreground">
-                  Posted on {format(post.date, 'MMMM d, yyyy')} by {post.author}
+                  Posted on {format(new Date(post.date), 'MMMM d, yyyy')} by {post.author}
                 </p>
               </header>
 

@@ -5,15 +5,30 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { MoreHorizontal, PlusCircle, Wrench } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
-import prisma from '@/lib/prisma';
 import type { Service } from '@/lib/definitions';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+
+async function getServices(): Promise<Service[]> {
+  const servicesCollection = collection(db, 'services');
+  const servicesSnapshot = await getDocs(servicesCollection);
+  const servicesList = servicesSnapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      title: data.title,
+      slug: data.slug,
+      short_desc: data.short_desc,
+      long_desc: data.long_desc,
+      details: data.details,
+      icon: serviceIcons[data.slug as keyof typeof serviceIcons] || Wrench,
+    } as Service;
+  });
+  return servicesList;
+}
 
 export default async function AdminServicesPage() {
-  const dbServices = await prisma.service.findMany();
-  const services: Service[] = dbServices.map(service => ({
-      ...service,
-      icon: serviceIcons[service.slug as keyof typeof serviceIcons] || Wrench,
-  }));
+  const services = await getServices();
 
   return (
     <div className="bg-secondary/50 flex-grow">

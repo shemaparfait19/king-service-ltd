@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Menu, Phone } from "lucide-react"
+import { Menu, Phone, Power } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
   DropdownMenu,
@@ -14,7 +14,7 @@ import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription, SheetTr
 import { ThemeToggle } from "@/components/theme-toggle"
 import { SearchDialog } from "@/components/search-dialog"
 import { LanguageSwitcher } from "../language-switcher"
-import type { Service } from "@prisma/client"
+import type { Service } from "@/lib/definitions"
 
 const navLinks = [
   { href: "/services", label: "Services", dropdown: true },
@@ -25,7 +25,7 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ]
 
-export function HeaderClient({ services }: { services: Service[] }) {
+export function HeaderClient({ services }: { services: Omit<Service, 'icon' | 'id'>[] }) {
   return (
     <>
       {/* Desktop Navigation */}
@@ -38,7 +38,7 @@ export function HeaderClient({ services }: { services: Service[] }) {
               </DropdownMenuTrigger>
               <DropdownMenuContent>
                 {services.map(service => (
-                  <DropdownMenuItem key={service.id} asChild>
+                  <DropdownMenuItem key={service.slug} asChild>
                     <Link href={`/services/${service.slug}`}>{service.title}</Link>
                   </DropdownMenuItem>
                 ))}

@@ -5,32 +5,40 @@ import {
   Briefcase,
   Lightbulb,
   Users,
+  Wrench,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import HeroSlider from '@/components/hero-slider';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import prisma from '@/lib/prisma';
 import type { Service } from '@/lib/definitions';
 import { serviceIcons } from '@/lib/data';
-import { notFound } from 'next/navigation';
+import { collection, getDocs, limit, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+
+async function getServices(): Promise<Service[]> {
+  const servicesCollection = collection(db, 'services');
+  const q = query(servicesCollection, limit(8));
+  const servicesSnapshot = await getDocs(q);
+  const servicesList = servicesSnapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      title: data.title,
+      slug: data.slug,
+      short_desc: data.short_desc,
+      long_desc: data.long_desc,
+      details: data.details,
+      icon: serviceIcons[data.slug as keyof typeof serviceIcons] || Wrench,
+    } as Service;
+  });
+  return servicesList;
+}
 
 export default async function Home() {
   const portfolioImage = PlaceHolderImages.find(p => p.id === 'portfolio-1');
-
-  const dbServices = await prisma.service.findMany({
-      take: 8,
-  });
-
-  const services: Service[] = dbServices.map(service => {
-    const icon = serviceIcons[service.slug as keyof typeof serviceIcons] || Wrench;
-    const gallery = PlaceHolderImages.filter(p => p.id.startsWith(`service-${service.slug}`));
-    return {
-        ...service,
-        icon: icon,
-    }
-  });
+  const services = await getServices();
 
   return (
     <div className="flex flex-col min-h-[100dvh]">

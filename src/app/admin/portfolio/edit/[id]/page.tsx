@@ -1,20 +1,20 @@
 import { notFound } from 'next/navigation';
-import prisma from '@/lib/prisma';
 import { EditProjectForm } from './edit-project-form';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { PortfolioProject } from '@/lib/definitions';
 
 export default async function EditPortfolioProjectPage({ params }: { params: { id: string } }) {
-  const projectId = parseInt(params.id);
-  if (isNaN(projectId)) {
+  const projectDoc = await getDoc(doc(db, "portfolioProjects", params.id));
+
+  if (!projectDoc.exists()) {
     notFound();
   }
 
-  const project = await prisma.portfolioProject.findUnique({
-    where: { id: projectId }
-  });
-
-  if (!project) {
-    notFound();
-  }
+  const project = {
+    id: projectDoc.id,
+    ...projectDoc.data(),
+  } as PortfolioProject;
 
   return (
     <div className="bg-secondary/50 flex-grow">

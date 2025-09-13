@@ -1,8 +1,11 @@
 "use server"
 
 import { z } from "zod"
-import prisma from "./prisma"
 import { revalidatePath } from "next/cache"
+import { db } from "./firebase"
+import { collection, getDocs, addDoc, doc, updateDoc, deleteDoc, query, where, limit } from "firebase/firestore";
+import type { Service, BlogPost, PortfolioProject } from "./definitions";
+
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -41,12 +44,21 @@ export async function submitContactForm(
     }
   }
 
-  // In a real app, you'd save this to the database
-  console.log("New contact form submission:", validatedFields.data)
-
-  return {
-    message: "Your message has been sent successfully!",
-    success: true,
+  try {
+    await addDoc(collection(db, "contactSubmissions"), {
+      ...validatedFields.data,
+      submittedAt: new Date(),
+    });
+    return {
+      message: "Your message has been sent successfully!",
+      success: true,
+    }
+  } catch (error) {
+    console.error("Firestore submission error:", error);
+    return {
+      message: "An internal error occurred. Please try again later.",
+      success: false,
+    }
   }
 }
 
@@ -62,43 +74,35 @@ export type SearchResultGroup = {
   items: SearchResultItem[];
 };
 
-export async function searchSite(query: string): Promise<SearchResultGroup[]> {
-  if (query.length < 3) return [];
+export async function searchSite(searchQuery: string): Promise<SearchResultGroup[]> {
+  if (searchQuery.length < 3) return [];
+  const lowerCaseQuery = searchQuery.toLowerCase();
 
   try {
-    const [services, blogPosts, portfolioProjects] = await Promise.all([
-      prisma.service.findMany({
-        where: {
-          OR: [
-            { title: { contains: query, mode: 'insensitive' } },
-            { short_desc: { contains: query, mode: 'insensitive' } },
-            { long_desc: { contains: query, mode: 'insensitive' } },
-          ],
-        },
-        take: 5,
-      }),
-      prisma.blogPost.findMany({
-        where: {
-          status: 'Published',
-          OR: [
-            { title: { contains: query, mode: 'insensitive' } },
-            { content: { contains: query, mode: 'insensitive' } },
-            { excerpt: { contains: query, mode: 'insensitive' } },
-          ],
-        },
-        take: 5,
-      }),
-      prisma.portfolioProject.findMany({
-        where: {
-          OR: [
-            { title: { contains: query, mode: 'insensitive' } },
-            { description: { contains: query, mode: 'insensitive' } },
-            { category: { contains: query, mode: 'insensitive' } },
-          ],
-        },
-        take: 5,
-      }),
+    const servicesRef = collection(db, 'services');
+    const blogPostsRef = collection(db, 'blogPosts');
+    const portfolioProjectsRef = collection(db, 'portfolioProjects');
+
+    const [servicesSnapshot, blogPostsSnapshot, portfolioProjectsSnapshot] = await Promise.all([
+      getDocs(servicesRef),
+      getDocs(blogPostsRef),
+      getDocs(portfolioProjectsRef),
     ]);
+    
+    const services = servicesSnapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() } as Service))
+        .filter(s => s.title.toLowerCase().includes(lowerCaseQuery) || s.short_desc.toLowerCase().includes(lowerCaseQuery))
+        .slice(0, 5);
+
+    const blogPosts = blogPostsSnapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() } as BlogPost))
+        .filter(p => p.status === 'Published' && (p.title.toLowerCase().includes(lowerCaseQuery) || p.content.toLowerCase().includes(lowerCaseQuery)))
+        .slice(0, 5);
+    
+    const portfolioProjects = portfolioProjectsSnapshot.docs
+        .map(doc => ({ id: doc.id, ...doc.data() } as PortfolioProject))
+        .filter(p => p.title.toLowerCase().includes(lowerCaseQuery) || p.description.toLowerCase().includes(lowerCaseQuery))
+        .slice(0, 5);
 
     const results: SearchResultGroup[] = [];
 
@@ -129,7 +133,7 @@ export async function searchSite(query: string): Promise<SearchResultGroup[]> {
         group: 'Portfolio Projects',
         items: portfolioProjects.map(p => ({
           title: p.title,
-          href: '/portfolio', // Portfolio items don't have individual pages yet
+          href: '/portfolio',
           excerpt: p.description,
         })),
       });
@@ -150,30 +154,27 @@ export async function createBlogPost(data: { title: string; content: string; sta
     const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const excerpt = data.content.substring(0, 150) + (data.content.length > 150 ? '...' : '');
     
-    await prisma.blogPost.create({
-        data: {
-            ...data,
-            slug,
-            excerpt,
-            author: 'Admin', // Default author
-            category: 'General', // Default category
-        }
+    await addDoc(collection(db, "blogPosts"), {
+        ...data,
+        slug,
+        excerpt,
+        author: 'Admin', // Default author
+        category: 'General', // Default category
+        date: new Date(),
     });
     revalidatePath('/admin/announcements');
     revalidatePath('/blog');
 }
 
-export async function updateBlogPost(id: number, data: { title: string; content: string; status: 'Draft' | 'Published' }) {
+export async function updateBlogPost(id: string, data: { title: string; content: string; status: 'Draft' | 'Published' }) {
     const slug = data.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     const excerpt = data.content.substring(0, 150) + (data.content.length > 150 ? '...' : '');
 
-    await prisma.blogPost.update({
-        where: { id },
-        data: {
-            ...data,
-            slug,
-            excerpt,
-        }
+    const postRef = doc(db, "blogPosts", id);
+    await updateDoc(postRef, {
+        ...data,
+        slug,
+        excerpt,
     });
     revalidatePath(`/admin/announcements`);
     revalidatePath(`/admin/announcements/edit/${id}`);
@@ -181,8 +182,8 @@ export async function updateBlogPost(id: number, data: { title: string; content:
     revalidatePath(`/blog/${slug}`);
 }
 
-export async function deleteBlogPost(id: number) {
-    await prisma.blogPost.delete({ where: { id } });
+export async function deleteBlogPost(id: string) {
+    await deleteDoc(doc(db, "blogPosts", id));
     revalidatePath('/admin/announcements');
     revalidatePath('/blog');
 }
@@ -190,53 +191,42 @@ export async function deleteBlogPost(id: number) {
 
 // Portfolio Actions
 export async function createPortfolioProject(data: { title: string; category: string; description: string, imageUrl?: string }) {
-    await prisma.portfolioProject.create({ data });
+    await addDoc(collection(db, "portfolioProjects"), data);
     revalidatePath('/admin/portfolio');
     revalidatePath('/portfolio');
 }
 
-export async function updatePortfolioProject(id: number, data: { title: string; category: string; description: string, imageUrl?: string }) {
-    await prisma.portfolioProject.update({ where: { id }, data });
+export async function updatePortfolioProject(id: string, data: { title: string; category: string; description: string, imageUrl?: string }) {
+    const projectRef = doc(db, "portfolioProjects", id);
+    await updateDoc(projectRef, data);
     revalidatePath('/admin/portfolio');
     revalidatePath(`/admin/portfolio/edit/${id}`);
     revalidatePath('/portfolio');
 }
 
-export async function deletePortfolioProject(id: number) {
-    await prisma.portfolioProject.delete({ where: { id } });
+export async function deletePortfolioProject(id: string) {
+    await deleteDoc(doc(db, "portfolioProjects", id));
     revalidatePath('/admin/portfolio');
     revalidatePath('/portfolio');
 }
 
 // Service Actions
 export async function createService(data: { title: string; slug: string; short_desc: string; long_desc: string; details: string[] }) {
-    await prisma.service.create({ data });
+    await addDoc(collection(db, "services"), data);
     revalidatePath('/admin/services');
     revalidatePath('/services');
 }
 
-export async function updateService(id: number, data: { title: string; short_desc: string; long_desc: string; details: string[] }) {
-    await prisma.service.update({ where: { id }, data });
+export async function updateService(id: string, data: { title: string; short_desc: string; long_desc: string; details: string[] }) {
+    const serviceRef = doc(db, "services", id);
+    await updateDoc(serviceRef, data);
     revalidatePath('/admin/services');
     revalidatePath(`/admin/services/edit/${id}`);
     revalidatePath('/services');
 }
 
-export async function deleteService(id: number) {
-    await prisma.service.delete({ where: { id } });
+export async function deleteService(id: string) {
+    await deleteDoc(doc(db, "services", id));
     revalidatePath('/admin/services');
     revalidatePath('/services');
-}
-
-// Image Actions
-export async function createImagePlaceholder(data: { id: string, description: string, imageUrl: string, imageHint: string }) {
-    // This is a placeholder as we're not saving to placeholder-images.json anymore
-    // In a real scenario, you'd upload the image to a cloud storage and save the URL in the database.
-    console.log('Creating image:', data);
-    revalidatePath('/admin/images');
-}
-
-export async function deleteImagePlaceholder(id: string) {
-    console.log('Deleting image:', id);
-    revalidatePath('/admin/images');
 }

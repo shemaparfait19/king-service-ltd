@@ -1,16 +1,24 @@
 import { notFound } from 'next/navigation';
 import { EditServiceForm } from './edit-service-form';
-import prisma from '@/lib/prisma';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { Service } from '@/lib/definitions';
+
+async function getService(id: string): Promise<Service | null> {
+    const serviceDoc = await getDoc(doc(db, "services", id));
+    if (!serviceDoc.exists()) {
+        return null;
+    }
+    const data = serviceDoc.data();
+    return {
+        id: serviceDoc.id,
+        ...data,
+    } as Service;
+}
+
 
 export default async function EditServicePage({ params }: { params: { id: string } }) {
-  const serviceId = parseInt(params.id);
-  if (isNaN(serviceId)) {
-    notFound();
-  }
-
-  const service = await prisma.service.findUnique({
-    where: { id: serviceId },
-  });
+  const service = await getService(params.id);
 
   if (!service) {
     notFound();

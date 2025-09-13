@@ -2,14 +2,28 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import prisma from '@/lib/prisma';
 import { format } from 'date-fns';
+import { collection, getDocs, query, where, orderBy } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { BlogPost } from '@/lib/definitions';
+
+async function getBlogPosts(): Promise<BlogPost[]> {
+    const postsCollection = collection(db, 'blogPosts');
+    const q = query(postsCollection, where("status", "==", "Published"), orderBy("date", "desc"));
+    const postsSnapshot = await getDocs(q);
+    const postList = postsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            date: data.date.toDate(), // Convert Firestore Timestamp to JS Date
+        } as BlogPost;
+    });
+    return postList;
+}
 
 export default async function BlogPage() {
-  const blogPosts = await prisma.blogPost.findMany({
-    where: { status: 'Published' },
-    orderBy: { date: 'desc' }
-  });
+  const blogPosts = await getBlogPosts();
 
   return (
     <div className="bg-background">
@@ -40,7 +54,7 @@ export default async function BlogPage() {
                   <Link href={`/blog/${post.slug}`}>{post.title}</Link>
                 </CardTitle>
                 <p className="text-sm text-muted-foreground mt-2">
-                  {format(post.date, 'MMMM d, yyyy')} by {post.author}
+                  {format(new Date(post.date), 'MMMM d, yyyy')} by {post.author}
                 </p>
                 <p className="mt-4 text-muted-foreground">{post.excerpt}</p>
               </CardContent>

@@ -1,20 +1,24 @@
 import { notFound } from 'next/navigation';
 import { EditPostForm } from './edit-post-form';
-import prisma from '@/lib/prisma';
+import { doc, getDoc } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { BlogPost } from '@/lib/definitions';
+
 
 export default async function EditAnnouncementPage({ params }: { params: { id: string } }) {
-  const postId = parseInt(params.id, 10);
-  if (isNaN(postId)) {
+  const postDoc = await getDoc(doc(db, "blogPosts", params.id));
+
+  if (!postDoc.exists()) {
     notFound();
   }
 
-  const post = await prisma.blogPost.findUnique({
-    where: { id: postId },
-  });
+  const postData = postDoc.data();
+  const post = {
+      id: postDoc.id,
+      ...postData,
+      date: postData.date.toDate()
+  } as BlogPost;
 
-  if (!post) {
-    notFound();
-  }
 
   return (
     <div className="bg-secondary/50 flex-grow">

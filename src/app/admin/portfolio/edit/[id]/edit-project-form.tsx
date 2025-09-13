@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
-import { type PortfolioProject } from '@prisma/client';
+import { type PortfolioProject } from '@/lib/definitions';
 import { useTransition } from 'react';
 import { updatePortfolioProject } from '@/lib/actions';
 

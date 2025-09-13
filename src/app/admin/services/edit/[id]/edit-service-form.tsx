@@ -11,7 +11,7 @@ import * as z from 'zod';
 import { useRouter } from 'next/navigation';
 import { Trash, PlusCircle, Upload } from 'lucide-react';
 import Image from 'next/image';
-import { type Service } from '@prisma/client';
+import { type Service } from '@/lib/definitions';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { updateService } from '@/lib/actions';
 import { useTransition } from 'react';

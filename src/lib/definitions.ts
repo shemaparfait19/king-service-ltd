@@ -1,8 +1,12 @@
 import { type LucideIcon } from 'lucide-react';
-import type { Service as PrismaService } from '@prisma/client'
 
-// Extending Prisma's generated Service type with the icon component
-export type Service = PrismaService & {
+export type Service = {
+    id: string;
+    title: string;
+    slug: string;
+    short_desc: string;
+    long_desc: string;
+    details: string[];
     icon: LucideIcon;
 };
 
@@ -19,5 +23,23 @@ export type ImagePlaceholder = {
   imageHint: string;
 };
 
-// These types are now derived from Prisma's generated types
-export type { BlogPost, PortfolioProject } from '@prisma/client';
+export type BlogPost = {
+    id: string;
+    title: string;
+    slug: string;
+    excerpt: string;
+    content: string;
+    date: any; // Firestore timestamp object or string
+    author: string;
+    category: string;
+    imageUrl?: string;
+    status: 'Draft' | 'Published';
+}
+
+export type PortfolioProject = {
+    id: string;
+    title: string;
+    category: string;
+    description: string;
+    imageUrl?: string;
+}

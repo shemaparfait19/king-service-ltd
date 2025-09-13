@@ -5,13 +5,28 @@ import { Badge } from '@/components/ui/badge';
 import { MoreHorizontal, PlusCircle } from 'lucide-react';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import Link from 'next/link';
-import prisma from '@/lib/prisma';
 import { format } from 'date-fns';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { db } from '@/lib/firebase';
+import type { BlogPost } from '@/lib/definitions';
+
+async function getBlogPosts(): Promise<BlogPost[]> {
+    const postsCollection = collection(db, 'blogPosts');
+    const q = query(postsCollection, orderBy("date", "desc"));
+    const postsSnapshot = await getDocs(q);
+    const postList = postsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+            id: doc.id,
+            ...data,
+            date: data.date.toDate(),
+        } as BlogPost;
+    });
+    return postList;
+}
 
 export default async function AdminAnnouncementsPage() {
-  const blogPosts = await prisma.blogPost.findMany({
-    orderBy: { date: 'desc' }
-  });
+  const blogPosts = await getBlogPosts();
 
   return (
     <div className="bg-secondary/50 flex-grow">
@@ -50,7 +65,7 @@ export default async function AdminAnnouncementsPage() {
                             {post.status}
                         </Badge>
                       </TableCell>
-                      <TableCell className="hidden md:table-cell text-muted-foreground">{format(post.date, 'MMMM d, yyyy')}</TableCell>
+                      <TableCell className="hidden md:table-cell text-muted-foreground">{format(new Date(post.date), 'MMMM d, yyyy')}</TableCell>
                       <TableCell className="text-right">
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
