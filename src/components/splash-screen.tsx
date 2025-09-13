@@ -31,7 +31,7 @@ const SplashScreen = ({ onFinished }: { onFinished: () => void }) => {
       )}
     >
       <div className="flex items-center gap-4">
-        <Image src="/logo.png" alt="KSTech Logo" width={48} height={48} />
+        <Image src="/logo.png" alt="KSTech Logo" width={48} height={48} priority />
         <div className="flex flex-col">
             <h1 className="text-4xl font-extrabold font-headline">KSTech Solutions</h1>
             <p className="text-lg text-muted-foreground italic">The King of Electronics</p>
