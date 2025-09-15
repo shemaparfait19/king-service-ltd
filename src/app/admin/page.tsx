@@ -17,6 +17,7 @@ import {
   Mail,
   BarChart3,
   Settings,
+  Briefcase,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
