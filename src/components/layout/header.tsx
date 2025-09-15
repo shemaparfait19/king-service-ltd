@@ -15,8 +15,9 @@ export default async function SiteHeader() {
     .sort((a, b) => a.title.localeCompare(b.title))
     .slice(0, 8);
 
-  const pathname = headers().get("next-url") || "";
-  const lang = pathname.split("/")[1];
+  const pathname = headers().get("next-url") || "/";
+  const seg = pathname.split("/")[1];
+  const lang = seg && seg.length === 2 ? seg : "en";
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
