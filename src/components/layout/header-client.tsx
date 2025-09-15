@@ -91,11 +91,18 @@ export function HeaderClient({
         <SearchDialog />
         <ThemeToggle />
         <LanguageSwitcher />
-        <Link href={`/${lang}/contact`} className="hidden lg:inline-flex">
+        <a
+          href={`https://wa.me/250787649480?text=${encodeURIComponent(
+            "Hello KSTech! I would like to book a service."
+          )}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hidden lg:inline-flex"
+        >
           <Button className="bg-accent text-accent-foreground hover:bg-accent/90">
             Book Now
           </Button>
-        </Link>
+        </a>
 
         {/* Mobile Menu */}
         <div className="md:hidden">
@@ -134,11 +141,18 @@ export function HeaderClient({
                     {link.label}
                   </Link>
                 ))}
-                <Link href={`/${lang}/contact`} className="mt-4">
+                <a
+                  href={`https://wa.me/250787649480?text=${encodeURIComponent(
+                    "Hello KSTech! I would like to book a service."
+                  )}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-4"
+                >
                   <Button className="w-full bg-accent text-accent-foreground hover:bg-accent/90">
                     Book Now
                   </Button>
-                </Link>
+                </a>
               </nav>
             </SheetContent>
           </Sheet>
