@@ -1,9 +1,15 @@
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Briefcase, GraduationCap, Users, Lightbulb } from "lucide-react";
+import type { Locale } from "@/i18n-config";
 
-export default function CareersPage() {
+export default function CareersPage({
+  params: { lang },
+}: {
+  params: { lang: Locale };
+}) {
   return (
     <div className="container py-12 md:py-24">
       <div className="text-center mb-12">
@@ -29,7 +35,9 @@ export default function CareersPage() {
               Join our team of skilled technicians and engineers in full-time
               positions with competitive benefits.
             </p>
-            <Button className="w-full">View Open Positions</Button>
+            <Link href={`/${lang}/careers/jobs`}>
+              <Button className="w-full">View Open Positions</Button>
+            </Link>
           </CardContent>
         </Card>
 
@@ -45,9 +53,11 @@ export default function CareersPage() {
               Gain hands-on experience and develop your skills through our
               comprehensive internship program.
             </p>
-            <Button variant="outline" className="w-full">
-              Apply for Internship
-            </Button>
+            <Link href={`/${lang}/careers/internships`}>
+              <Button variant="outline" className="w-full">
+                Apply for Internship
+              </Button>
+            </Link>
           </CardContent>
         </Card>
 
@@ -63,9 +73,11 @@ export default function CareersPage() {
               Enhance your technical skills with our specialized training
               programs and certifications.
             </p>
-            <Button variant="outline" className="w-full">
-              Explore Training
-            </Button>
+            <Link href={`/${lang}/careers/trainings`}>
+              <Button variant="outline" className="w-full">
+                Explore Training
+              </Button>
+            </Link>
           </CardContent>
         </Card>
       </div>
