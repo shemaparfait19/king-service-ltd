@@ -1,4 +1,3 @@
-
 "use client";
 
 import Image from "next/image";
@@ -30,37 +29,41 @@ const SplashScreen = ({ onFinished }: { onFinished: () => void }) => {
         isExiting ? "opacity-0" : "opacity-100"
       )}
     >
-      <div className="flex items-center gap-4">
-        <Image src="/logo.png" alt="KSTech Logo" width={48} height={48} priority />
-        <div className="flex flex-col">
-            <h1 className="text-4xl font-extrabold font-headline">KSTech Solutions</h1>
-            <p className="text-lg text-muted-foreground italic">The King of Electronics</p>
-        </div>
+      <div className="flex items-center">
+        <Image
+          src="/logo.png"
+          alt="KSTech Logo"
+          width={96}
+          height={96}
+          priority
+        />
       </div>
     </div>
   );
 };
 
+export function AppWithSplashScreen({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [loading, setLoading] = useState(true);
 
-export function AppWithSplashScreen({ children }: { children: React.ReactNode }) {
-    const [loading, setLoading] = useState(true);
+  // This is a temporary fix to avoid splash screen on every navigation
+  const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-    // This is a temporary fix to avoid splash screen on every navigation
-    const [isFirstLoad, setIsFirstLoad] = useState(true);
-
-    useEffect(() => {
-        if(isFirstLoad) {
-            setLoading(true);
-            setIsFirstLoad(false);
-        } else {
-            setLoading(false);
-        }
-    }, [isFirstLoad]);
-
-
-    if (loading) {
-        return <SplashScreen onFinished={() => setLoading(false)} />;
+  useEffect(() => {
+    if (isFirstLoad) {
+      setLoading(true);
+      setIsFirstLoad(false);
+    } else {
+      setLoading(false);
     }
+  }, [isFirstLoad]);
 
-    return <>{children}</>;
+  if (loading) {
+    return <SplashScreen onFinished={() => setLoading(false)} />;
+  }
+
+  return <>{children}</>;
 }

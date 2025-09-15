@@ -43,6 +43,20 @@ export default function ContactPage() {
                   Sunday: Closed
                 </p>
               </div>
+              <div>
+                <h3 className="font-semibold">Find Us</h3>
+                <div className="mt-2 rounded-lg overflow-hidden border">
+                  <iframe
+                    title="KSTech Location"
+                    src="https://www.google.com/maps?q=V34R+P56,+RN15,+Nyamata&output=embed"
+                    width="100%"
+                    height="300"
+                    style={{ border: 0 }}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
+                </div>
+              </div>
             </div>
           </div>
 
