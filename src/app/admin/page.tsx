@@ -55,6 +55,13 @@ const adminFeatures = [
     color: "bg-orange-500",
   },
   {
+    title: "Careers",
+    description: "Manage jobs, internships, trainings",
+    icon: Briefcase,
+    href: "/admin/careers",
+    color: "bg-amber-600",
+  },
+  {
     title: "Blog Posts",
     description: "Write and manage blog content",
     icon: FileText,
