@@ -192,7 +192,7 @@ export default async function Home({
               <p className="text-muted-foreground">
                 Join our team of skilled technicians and innovators.
               </p>
-              <Link href={`/${lang}/careers`}>
+              <Link href={`/${lang}/careers/jobs`}>
                 <Button variant="outline">View Open Positions</Button>
               </Link>
             </div>
@@ -203,7 +203,7 @@ export default async function Home({
               <p className="text-muted-foreground">
                 Gain hands-on experience and grow your skills with us.
               </p>
-              <Link href={`/${lang}/careers`}>
+              <Link href={`/${lang}/careers/internships`}>
                 <Button variant="outline">Apply for Internship</Button>
               </Link>
             </div>
@@ -214,7 +214,7 @@ export default async function Home({
               <p className="text-muted-foreground">
                 We offer specialized training programs for aspiring technicians.
               </p>
-              <Link href={`/${lang}/services`}>
+              <Link href={`/${lang}/careers/trainings`}>
                 <Button variant="outline">Explore Training</Button>
               </Link>
             </div>
