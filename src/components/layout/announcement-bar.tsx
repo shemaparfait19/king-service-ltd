@@ -24,11 +24,19 @@ export default function AnnouncementBar() {
         // Use single where and filter status on client to avoid composite index
         const q = query(postsRef, where("category", "==", "Announcement"));
         const snap = await getDocs(q);
-        const titles = snap.docs
+        const messages = snap.docs
           .map((d) => d.data() as any)
           .filter((p) => p.status === "Published")
-          .map((p) => p.title || p.excerpt || "Announcement");
-        if (mounted && titles.length > 0) setItems(titles);
+          .map((p) => {
+            const title = (p.title || "").toString().trim();
+            const body = (p.excerpt || p.content || "").toString().trim();
+            const short = body.length > 160 ? body.slice(0, 157) + "…" : body;
+            return title && short
+              ? `${title} — ${short}`
+              : title || short || "Announcement";
+          })
+          .filter(Boolean);
+        if (mounted && messages.length > 0) setItems(messages as string[]);
       } catch {
         // keep fallbacks
       }
@@ -52,9 +60,16 @@ export default function AnnouncementBar() {
     <div className="bg-accent text-accent-foreground relative z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-10">
-          <div className="flex items-center">
-            <Megaphone className="h-5 w-5 mr-3" />
-            <p className="text-sm font-medium">{items[currentIndex]}</p>
+          <div className="flex items-center overflow-hidden">
+            <Megaphone className="h-5 w-5 mr-3 flex-shrink-0" />
+            <div className="h-10 flex items-center">
+              <div
+                key={currentIndex}
+                className="animate-[slideUp_300ms_ease-out] text-sm font-medium whitespace-nowrap"
+              >
+                {items[currentIndex]}
+              </div>
+            </div>
           </div>
           <button
             onClick={() => setIsVisible(false)}
@@ -65,6 +80,18 @@ export default function AnnouncementBar() {
           </button>
         </div>
       </div>
+      <style jsx>{`
+        @keyframes slideUp {
+          from {
+            transform: translateY(8px);
+            opacity: 0;
+          }
+          to {
+            transform: translateY(0);
+            opacity: 1;
+          }
+        }
+      `}</style>
     </div>
   );
 }
