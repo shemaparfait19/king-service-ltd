@@ -86,13 +86,39 @@ export default async function ServicesPage({
                   <p className="text-sm text-muted-foreground flex-grow">
                     {service.short_desc}
                   </p>
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className="mt-auto text-accent group-hover:underline p-0"
-                  >
-                    Learn More <ArrowRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  <div className="mt-auto flex items-center gap-3">
+                    <Link href={`/${lang}/services/${service.slug}`}>
+                      <Button
+                        variant="link"
+                        size="sm"
+                        className="text-accent p-0"
+                      >
+                        Learn More <ArrowRight className="ml-2 h-4 w-4" />
+                      </Button>
+                    </Link>
+                    <a
+                      href={`https://wa.me/250787649480?text=${encodeURIComponent(
+                        "Hello KSTech! I need a quote for: " + service.title
+                      )}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-accent hover:underline"
+                    >
+                      WhatsApp Quote
+                    </a>
+                    <a
+                      href={`mailto:kstrwanda@gmail.com?subject=${encodeURIComponent(
+                        "Quote Request: " + service.title
+                      )}&body=${encodeURIComponent(
+                        "Hello KSTech,%0D%0A%0D%0AI'd like a quote for: " +
+                          service.title +
+                          ".%0D%0A%0D%0AThanks."
+                      )}`}
+                      className="text-sm text-accent hover:underline"
+                    >
+                      Email Quote
+                    </a>
+                  </div>
                 </CardContent>
               </Link>
             </Card>

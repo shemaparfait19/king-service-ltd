@@ -5,7 +5,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import HeroSlider from "@/components/hero-slider";
-import AnnouncementsBanner from "@/components/announcements-banner";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import type { Service } from "@/lib/definitions";
 import { serviceIcons } from "@/lib/data";
@@ -43,7 +42,6 @@ export default async function Home({
 
   return (
     <div className="flex flex-col min-h-[100dvh]">
-      <AnnouncementsBanner />
       <section className="relative w-full h-[70vh] md:h-[90vh]">
         <HeroSlider />
       </section>

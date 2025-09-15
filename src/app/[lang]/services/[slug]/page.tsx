@@ -118,13 +118,34 @@ export default async function ServiceDetailPage({
               </div>
             </div>
 
-            <div className="mt-8">
-              <Button
-                size="lg"
-                className="bg-accent text-accent-foreground hover:bg-accent/90"
+            <div className="mt-8 flex flex-wrap items-center gap-3">
+              <a
+                href={`https://wa.me/250787649480?text=${encodeURIComponent(
+                  "Hello KSTech! I need a quote for: " + service.title
+                )}`}
+                target="_blank"
+                rel="noopener noreferrer"
               >
-                Request a Quote
-              </Button>
+                <Button
+                  size="lg"
+                  className="bg-green-600 hover:bg-green-700 text-white"
+                >
+                  WhatsApp Quote
+                </Button>
+              </a>
+              <a
+                href={`mailto:kstrwanda@gmail.com?subject=${encodeURIComponent(
+                  "Quote Request: " + service.title
+                )}&body=${encodeURIComponent(
+                  "Hello KSTech,%0D%0A%0D%0AI'd like a quote for: " +
+                    service.title +
+                    ".%0D%0A%0D%0AThanks."
+                )}`}
+              >
+                <Button size="lg" variant="outline">
+                  Email Quote
+                </Button>
+              </a>
             </div>
           </div>
         </div>
