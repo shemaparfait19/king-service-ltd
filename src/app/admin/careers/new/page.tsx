@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { ImagePicker } from "@/components/ui/image-picker";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
@@ -162,11 +163,11 @@ export default function NewCareerPage() {
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="imageUrl">Image URL</Label>
-              <Input
-                id="imageUrl"
+              <ImagePicker
+                label="Image"
                 value={imageUrl}
-                onChange={(e) => setImageUrl(e.target.value)}
+                onChange={setImageUrl}
+                storageFolder={`careers/${type}`}
               />
             </div>
             <div className="grid gap-2">

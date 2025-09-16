@@ -25,7 +25,26 @@ export default function ContactPage() {
               </div>
               <div>
                 <h3 className="font-semibold">Email</h3>
-                <p className="text-muted-foreground"> kstrwanda@gmail.com </p>
+                <p className="text-muted-foreground">kstrwanda@gmail.com</p>
+                <div className="mt-2 flex gap-2">
+                  <a
+                    href="mailto:kstrwanda@gmail.com"
+                    className="text-primary hover:underline"
+                  >
+                    Email us
+                  </a>
+                  <span className="text-muted-foreground">·</span>
+                  <a
+                    href={`https://wa.me/250787649480?text=${encodeURIComponent(
+                      "Hello KSTech! I would like to get in touch."
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    WhatsApp
+                  </a>
+                </div>
               </div>
               <div>
                 <h3 className="font-semibold">Address</h3>
