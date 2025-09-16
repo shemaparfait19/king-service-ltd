@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ImagePicker } from "@/components/ui/image-picker";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -25,6 +26,11 @@ const postSchema = z.object({
   title: z.string().min(5, "Title must be at least 5 characters"),
   content: z.string().min(20, "Content must be at least 20 characters"),
   status: z.enum(["Draft", "Published"]),
+  imageUrl: z
+    .string()
+    .url("Please enter a valid image URL")
+    .optional()
+    .or(z.literal("")),
 });
 
 type PostFormValues = z.infer<typeof postSchema>;
@@ -38,12 +44,14 @@ export default function NewAnnouncementPage() {
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm<PostFormValues>({
     resolver: zodResolver(postSchema),
     defaultValues: {
       title: "",
       content: "",
       status: "Draft",
+      imageUrl: "",
     },
   });
 
@@ -105,6 +113,17 @@ export default function NewAnnouncementPage() {
                       {errors.title.message}
                     </p>
                   )}
+                </div>
+
+                <div className="grid gap-2">
+                  <Label>Featured Image</Label>
+                  <ImagePicker
+                    value={watch("imageUrl") as unknown as string}
+                    onChange={(url) =>
+                      setValue("imageUrl", url as any, { shouldValidate: true })
+                    }
+                    storageFolder="posts"
+                  />
                 </div>
 
                 <div className="grid gap-2">

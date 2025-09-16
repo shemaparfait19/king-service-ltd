@@ -4,6 +4,7 @@ import React, { useState, useTransition } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { ImagePicker } from "@/components/ui/image-picker";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useForm, SubmitHandler } from "react-hook-form";
@@ -201,11 +202,13 @@ export default function NewServicePage() {
               </div>
 
               <div className="grid gap-2">
-                <Label htmlFor="imageUrl">Service Image URL</Label>
-                <Input
-                  id="imageUrl"
-                  {...register("imageUrl")}
-                  placeholder="https://example.com/service-image.jpg"
+                <ImagePicker
+                  label="Service Image"
+                  value={imageUrl}
+                  onChange={(url) =>
+                    setValue("imageUrl", url, { shouldValidate: true })
+                  }
+                  storageFolder="services"
                 />
                 {errors.imageUrl && (
                   <p className="text-destructive text-sm">
