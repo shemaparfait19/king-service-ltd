@@ -23,17 +23,24 @@ export function ImagePicker({
   const [mode, setMode] = useState<"url" | "upload">(value ? "url" : "upload");
   const [uploadProgress, setUploadProgress] = useState<number>(0);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [uploadError, setUploadError] = useState<string>("");
 
   const previewSrc = useMemo(() => value || "", [value]);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    if (file.size === 0) {
+      setUploadError("Selected file is empty.");
+      return;
+    }
     const filePath = `${storageFolder}/${Date.now()}-${file.name}`;
     const storageRef = ref(storage, filePath);
-    const task = uploadBytesResumable(storageRef, file);
+    const metadata = { contentType: file.type || "application/octet-stream" };
+    const task = uploadBytesResumable(storageRef, file, metadata);
     setIsUploading(true);
     setUploadProgress(0);
+    setUploadError("");
 
     task.on(
       "state_changed",
@@ -41,9 +48,10 @@ export function ImagePicker({
         const pct = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setUploadProgress(Math.round(pct));
       },
-      () => {
+      (error) => {
+        console.error("Upload error:", error);
         setIsUploading(false);
-        // Error is silently ignored; caller can retry
+        setUploadError("Upload failed. Please try again.");
       },
       async () => {
         const url = await getDownloadURL(task.snapshot.ref);
@@ -86,6 +94,9 @@ export function ImagePicker({
             <div className="text-sm text-muted-foreground">
               Uploading… {uploadProgress}%
             </div>
+          )}
+          {uploadError && (
+            <div className="text-sm text-destructive">{uploadError}</div>
           )}
         </div>
       )}
